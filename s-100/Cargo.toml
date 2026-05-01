@@ -1,0 +1,14 @@
+[package]
+name = "s-100"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "IHO S-100 Universal Hydrographic Data Model — shared Rust types (stub)."
+readme = "README.md"
+keywords = ["iho", "s-100", "hydrography", "ecdis", "enc"]
+categories = ["science", "parser-implementations"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]

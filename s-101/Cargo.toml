@@ -1,0 +1,16 @@
+[package]
+name = "s-101"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "IHO S-101 Electronic Navigational Chart (ENC) — decode from ISO 8211 (initial slice)."
+readme = "README.md"
+keywords = ["iho", "s-101", "enc", "ecdis", "s-100"]
+categories = ["science", "parser-implementations"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]
+iso8211 = { version = "0.1.5", path = "../iso8211" }
+thiserror = "2.0"

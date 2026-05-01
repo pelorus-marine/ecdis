@@ -1,0 +1,12 @@
+/target
+**/target/
+**/*.rs.bk
+*.pdb
+rust_out
+.coverage/
+*.profraw
+*.profdata
+.claude/
+
+# ENC samples (place `s101_sample.000` locally if desired; do not commit commercial cells)
+testdata/*.000

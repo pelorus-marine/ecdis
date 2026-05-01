@@ -1,0 +1,15 @@
+[package]
+name = "pelorus-ecdis"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "Bridge S-101 ENC data with Pelorus Core–style navigation inputs (own-ship, AIS)."
+readme = "README.md"
+keywords = ["pelorus", "ecdis", "s-101", "enc", "navigation"]
+categories = ["science"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]
+s-101 = { version = "0.0.1", path = "../s-101" }

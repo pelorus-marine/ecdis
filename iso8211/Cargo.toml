@@ -1,0 +1,25 @@
+[package]
+name = "iso8211"
+version = "0.1.5"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "ISO 8211 data format parsing library (IHO S-57 / S-100 family exchange format)"
+documentation = "https://docs.rs/iso8211"
+readme = "README.md"
+keywords = ["iso8211", "iho", "s-57", "s-101", "enc"]
+categories = ["parser-implementations", "science"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[package.metadata.docs.rs]
+all-features = false
+
+[[example]]
+name = "print"
+path = "examples/print.rs"
+
+[dependencies]
+
+[badges.maintenance]
+status = "experimental"

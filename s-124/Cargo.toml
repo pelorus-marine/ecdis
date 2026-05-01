@@ -1,0 +1,14 @@
+[package]
+name = "s-124"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "IHO S-124 Navigational Warnings — Rust types and parsers (stub)."
+readme = "README.md"
+keywords = ["iho", "s-124", "navwarnings", "s-100", "ecdis"]
+categories = ["science", "parser-implementations"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]
