@@ -16,6 +16,10 @@ Provide **typed access** to **S-101 ENC** datasets: load **ISO 8211** exchange f
 
 - **In scope (future):** Full feature / information types, geometry, RCID/FOID graphs, catalogue-driven validation.
 - **Out of scope:** **Portrayal** (S-100 portrayal / AML); **FAFF** / permits; **Pelorus Core** wiring — use [`pelorus-ecdis`](../pelorus-ecdis/) for own-ship + chart bundles.
+- **Out of scope (conformance harness):** IHO **S-164** zip corpora, exchange-set discovery, **`CATALOG.XML`** routing, GitHub release URLs, mapping manual sections or scenarios to bundles — that is **[`s-164`](../s-164/)** and **callers**.
+- **Relationship to [`s-164`](../s-164/):** `s-101` accepts **ENC interchange** as paths or bytes via [`iso8211`](../iso8211/). Callers combine `s-164` output (paths/metadata) with `s-101`; **`s-101` must not depend on `s-164`.**
+
+[`pelorus-ecdis`](../pelorus-ecdis/ARCHITECTURE.md) remains **integration** (chart + telemetry-shaped types), not the conformance-test harness layer.
 
 ## Parsing strategy
 
