@@ -165,14 +165,12 @@ fn refresh_panel(
     let mut heading_show = false;
     let mut hx2 = 0.0_f32;
     let mut hy2 = 0.0_f32;
-    if own_ship_show {
-        if let Some(hdg) = ctx.own_ship.heading_true_deg {
-            let rad = hdg.to_radians();
-            let len = 56.0_f64;
-            hx2 = own_ship_x + (len * rad.sin()) as f32;
-            hy2 = own_ship_y - (len * rad.cos()) as f32;
-            heading_show = true;
-        }
+    if own_ship_show && let Some(hdg) = ctx.own_ship.heading_true_deg {
+        let rad = hdg.to_radians();
+        let len = 56.0_f64;
+        hx2 = own_ship_x + (len * rad.sin()) as f32;
+        hy2 = own_ship_y - (len * rad.cos()) as f32;
+        heading_show = true;
     }
     ui.set_own_ship_heading_visible(heading_show);
     ui.set_own_ship_heading_x2(hx2);
