@@ -66,13 +66,13 @@ impl Format {
                         return Err(Iso8211Error::Parse(format!(
                             "invalid unsigned integer size: '{}'",
                             value
-                        )))
+                        )));
                     }
                     None => {
                         return Err(Iso8211Error::Parse(format!(
                             "missing unsigned integer size: '{}'",
                             value
-                        )))
+                        )));
                     }
                 },
                 Some('2') => match chars.next() {
@@ -83,13 +83,13 @@ impl Format {
                         return Err(Iso8211Error::Parse(format!(
                             "invalid signed integer size: '{}'",
                             value
-                        )))
+                        )));
                     }
                     None => {
                         return Err(Iso8211Error::Parse(format!(
                             "missing signed integer size: '{}'",
                             value
-                        )))
+                        )));
                     }
                 },
                 Some('4') => match chars.next() {
@@ -98,26 +98,26 @@ impl Format {
                         return Err(Iso8211Error::Parse(format!(
                             "invalid signed floating point size: '{}'",
                             value
-                        )))
+                        )));
                     }
                     None => {
                         return Err(Iso8211Error::Parse(format!(
                             "missing signed floating point size: '{}'",
                             value
-                        )))
+                        )));
                     }
                 },
                 Some(_) => {
                     return Err(Iso8211Error::Parse(format!(
                         "invalid signed floating point size: '{}'",
                         value
-                    )))
+                    )));
                 }
                 None => {
                     return Err(Iso8211Error::Parse(format!(
                         "missing signed floating point size: '{}'",
                         value
-                    )))
+                    )));
                 }
             },
             Some('A') => match chars.next() {
@@ -140,7 +140,7 @@ impl Format {
                                 return Err(Iso8211Error::Parse(format!(
                                     "invalid signed floating point size: '{}'",
                                     value
-                                )))
+                                )));
                             }
                         }
                     }
@@ -151,7 +151,7 @@ impl Format {
                     return Err(Iso8211Error::Parse(format!(
                         "invalid character string format: '{}'",
                         value
-                    )))
+                    )));
                 }
                 None => formats = vec![Format::CharacterData(None); multiplicity],
             },
@@ -159,13 +159,13 @@ impl Format {
                 return Err(Iso8211Error::Parse(format!(
                     "invalid data type in format: '{}'",
                     value
-                )))
+                )));
             }
             None => {
                 return Err(Iso8211Error::Parse(format!(
                     "format missing data type: '{}'",
                     value
-                )))
+                )));
             }
         }
 

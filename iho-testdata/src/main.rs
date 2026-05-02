@@ -11,8 +11,8 @@
 
 use std::env;
 
-use iho_testdata::{run_corpus_zip, CorpusRunSummary};
-use s_164::{download_bytes, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL};
+use iho_testdata::{CorpusRunSummary, run_corpus_zip};
+use s_164::{DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, download_bytes};
 
 enum Mode {
     Local(String),

@@ -1,7 +1,7 @@
 [package]
 name = "s-99"
 version = "0.0.1"
-edition = "2021"
+edition = "2024"
 rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "IHO S-99 (GI registry operational procedures) — Rust placeholder."

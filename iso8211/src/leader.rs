@@ -185,7 +185,7 @@ impl Leader {
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use crate::{leader::Leader, Reader, Result};
+    use crate::{Reader, Result, leader::Leader};
     use std::io::{BufReader, Cursor};
 
     pub fn ascii_ddr_leader() -> Result<Leader> {

@@ -5,11 +5,11 @@
 #![forbid(unsafe_code)]
 
 use ecdis_behaviours::{
-    display_is_overscaled_vs_chart_minimum, AlarmSink, NavAlertKind, StderrAlarmSink,
+    AlarmSink, NavAlertKind, StderrAlarmSink, display_is_overscaled_vs_chart_minimum,
 };
 use ecdis_portrayal::{NoPortrayal, PortrayalPipeline};
 use pelorus_core_adapter::{
-    merge_own_ship_fill_missing, CoreSampleMapper, OwnShip, UnconfiguredMapper,
+    CoreSampleMapper, OwnShip, UnconfiguredMapper, merge_own_ship_fill_missing,
 };
 use pelorus_ecdis::ChartNavContext;
 use s_101::{FeatureCataloguePin, S101Dataset, TARGET_PRODUCT_SPECIFICATION_EDITION};

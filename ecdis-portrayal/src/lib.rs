@@ -11,8 +11,8 @@ mod cpu_outline;
 use std::fmt;
 
 pub use chart_viewport::{
-    approx_own_ship_screen_px, demo_stub_segments_px, ChartViewport, ChartViewportState,
-    UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX,
+    ChartViewport, ChartViewportState, UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX,
+    approx_own_ship_screen_px, demo_stub_segments_px,
 };
 pub use cpu_outline::CpuOutlinePortrayal;
 use s_101::S101Dataset;

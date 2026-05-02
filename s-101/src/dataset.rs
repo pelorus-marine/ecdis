@@ -3,8 +3,8 @@ use std::path::Path;
 
 use iso8211::DataDescriptiveFile;
 
-use crate::decode::record_field_payload;
 use crate::S101Error;
+use crate::decode::record_field_payload;
 
 /// Loaded **S-101** ENC exchange: ISO 8211 container with structural validation only.
 ///

@@ -1,6 +1,6 @@
 use std::io::{BufReader, Read, Seek, SeekFrom};
 
-use crate::{Iso8211Error, Result, FIELD_TERMINATOR, UNIT_TERMINATOR};
+use crate::{FIELD_TERMINATOR, Iso8211Error, Result, UNIT_TERMINATOR};
 
 /// ISO 8211 file reader
 pub struct Reader<T> {

@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use crate::{ddr::DataDescriptiveRecord, dr::DataRecord, Reader, Result};
+use crate::{Reader, Result, ddr::DataDescriptiveRecord, dr::DataRecord};
 
 pub struct DataDescriptiveFile {
     data_descriptive_record: DataDescriptiveRecord,
@@ -47,7 +47,7 @@ impl DataDescriptiveFile {
 pub(crate) mod tests {
     use std::io::{BufReader, Cursor};
 
-    use crate::{tests::to_bytes, DataDescriptiveFile};
+    use crate::{DataDescriptiveFile, tests::to_bytes};
 
     #[test]
     fn test_ddr_leader() {

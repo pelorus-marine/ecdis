@@ -1,7 +1,7 @@
 [package]
 name = "pelorus-ecdis"
 version = "0.0.1"
-edition = "2021"
+edition = "2024"
 rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "Bridge S-101 ENC data with Pelorus Core–style navigation inputs (own-ship, AIS)."

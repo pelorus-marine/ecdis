@@ -7,18 +7,18 @@ slint::include_modules!();
 
 use std::sync::{Arc, Mutex};
 
-use ecdis_behaviours::{display_is_overscaled_vs_chart_minimum, AlarmSink, NavAlertKind};
+use ecdis_behaviours::{AlarmSink, NavAlertKind, display_is_overscaled_vs_chart_minimum};
 use ecdis_portrayal::{
-    approx_own_ship_screen_px, demo_stub_segments_px, ChartViewport, ChartViewportState,
-    CpuOutlinePortrayal, UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX,
+    ChartViewport, ChartViewportState, CpuOutlinePortrayal, UI_CHART_VIEWBOX_HEIGHT_PX,
+    UI_CHART_VIEWBOX_WIDTH_PX, approx_own_ship_screen_px, demo_stub_segments_px,
 };
 use pelorus_core_adapter::{
-    merge_own_ship_fill_missing, CoreSampleMapper, OwnShip, UnconfiguredMapper,
+    CoreSampleMapper, OwnShip, UnconfiguredMapper, merge_own_ship_fill_missing,
 };
 use pelorus_ecdis::ChartNavContext;
 use s_101::{
-    parse_fc_edition_summary, FcEditionSummary, FeatureCataloguePin, S101Dataset,
-    TARGET_PRODUCT_SPECIFICATION_EDITION,
+    FcEditionSummary, FeatureCataloguePin, S101Dataset, TARGET_PRODUCT_SPECIFICATION_EDITION,
+    parse_fc_edition_summary,
 };
 use slint::{ModelRc, VecModel};
 

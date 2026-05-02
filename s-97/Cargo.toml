@@ -1,7 +1,7 @@
 [package]
 name = "s-97"
 version = "0.0.1"
-edition = "2021"
+edition = "2024"
 rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "IHO S-97 (Guidelines for S-100 product specifications) — Rust placeholder."

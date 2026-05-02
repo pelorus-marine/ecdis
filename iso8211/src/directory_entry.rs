@@ -1,6 +1,6 @@
 use std::io::{Read, Seek};
 
-use crate::{leader::Leader, Reader, Result};
+use crate::{Reader, Result, leader::Leader};
 
 #[derive(Debug)]
 pub struct DirectoryEntry {

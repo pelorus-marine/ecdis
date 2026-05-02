@@ -23,11 +23,11 @@ mod download;
 mod error;
 
 pub use archive::{
-    discover_exchange_sets, read_zip_entry, resolve_bundle_path, zip_archive_from_bytes,
-    ExchangeSetLocation, S100_ROOT_CATALOG_XML_SUFFIX,
+    ExchangeSetLocation, S100_ROOT_CATALOG_XML_SUFFIX, discover_exchange_sets, read_zip_entry,
+    resolve_bundle_path, zip_archive_from_bytes,
 };
-pub use catalogue::{parse_exchange_catalogue, DatasetDiscovery, ExchangeCatalogue};
-pub use download::{download_bytes, download_bytes_with_timeout, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL};
+pub use catalogue::{DatasetDiscovery, ExchangeCatalogue, parse_exchange_catalogue};
+pub use download::{DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, download_bytes, download_bytes_with_timeout};
 pub use error::{S164Error, S164Result};
 
 use std::io::{Read, Seek};

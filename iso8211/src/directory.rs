@@ -1,6 +1,6 @@
 use std::io::{Read, Seek};
 
-use crate::{directory_entry::DirectoryEntry, leader::Leader, Reader, Result, FIELD_TERMINATOR};
+use crate::{FIELD_TERMINATOR, Reader, Result, directory_entry::DirectoryEntry, leader::Leader};
 
 #[derive(Debug)]
 pub struct Directory {
@@ -32,7 +32,7 @@ pub mod tests {
     use std::io::{BufReader, Cursor};
 
     use crate::{
-        leader::tests::ascii_ddr_leader, Directory, Leader, Reader, Result, FIELD_TERMINATOR,
+        Directory, FIELD_TERMINATOR, Leader, Reader, Result, leader::tests::ascii_ddr_leader,
     };
 
     pub fn ascii_ddr_directory() -> Result<(Leader, Directory)> {

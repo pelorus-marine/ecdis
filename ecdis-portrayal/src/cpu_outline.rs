@@ -1,6 +1,6 @@
 //! CPU-side outline portrayal from **C2IL** polylines (WGS84 degrees).
 
-use s_101::{extract_c2il_polylines_wgs84, IntegerCrsParameters, S101Dataset};
+use s_101::{IntegerCrsParameters, S101Dataset, extract_c2il_polylines_wgs84};
 
 use crate::{ChartViewportState, PortrayError, PortrayalPipeline};
 

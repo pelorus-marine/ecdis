@@ -3,8 +3,8 @@
 //! S-101 features are carried in data records that include an **`FRID`** directory field.
 //! Interpreting FRID / geometry / attributes per the feature catalogue is future work.
 
-use crate::decode::record_field_payload;
 use crate::S101Dataset;
+use crate::decode::record_field_payload;
 
 /// Summary counts derived without yet parsing FC-backed attributes.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]

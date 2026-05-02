@@ -27,7 +27,7 @@ Full crate table: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
 
-- Rust **stable** **≥ 1.88** (see `rust-toolchain.toml`: `rustfmt`, `clippy`): matches **`ecdis-ui`** / Slint and **`pelorus-ecdis`** pulling **`pelorus-core`** from **`pelorus-marine/platform`**.
+- Rust **stable** **≥ 1.88** (see `rust-toolchain.toml`: `rustfmt`, `clippy`): matches **`ecdis-ui`** / Slint, **`Rust 2024`** edition (`edition = "2024"` in every crate manifest), and **`pelorus-ecdis`** pulling **`pelorus-core`** from **`pelorus-marine/platform`**.
 - Linux dev libraries for Slint (`fontconfig`, Wayland, EGL/Mesa, …) — [`ecdis-ui/README.md`](ecdis-ui/README.md).
 
 ## Common commands

@@ -3,8 +3,8 @@
 //! Coordinate conversion follows S-101 ENC integer CRS usage: `lon = DCOX + XCOO / CMFX`,
 //! `lat = DCOY + YCOO / CMFY` (see IHO S-101 product specification / S-100 Part 10a).
 
-use crate::decode::record_field_payload;
 use crate::S101Dataset;
+use crate::decode::record_field_payload;
 
 /// CRS parameters from the **DSSI** field on dataset record 0 (empirical layout for current test cells).
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -29,10 +29,10 @@ impl Default for IntegerCrsParameters {
 /// Strip ISO 8211 **unit terminator** (`0x1E`) suffix if present.
 #[must_use]
 pub fn trim_iso8211_unit_term(mut payload: &[u8]) -> &[u8] {
-    if let Some(last) = payload.last().copied() {
-        if last == 0x1E {
-            payload = &payload[..payload.len() - 1];
-        }
+    if let Some(last) = payload.last().copied()
+        && last == 0x1E
+    {
+        payload = &payload[..payload.len() - 1];
     }
     payload
 }

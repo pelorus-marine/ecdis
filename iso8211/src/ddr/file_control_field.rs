@@ -1,5 +1,5 @@
 use crate::{
-    DirectoryEntry, Iso8211Error, Leader, Reader, Result, FIELD_TERMINATOR, UNIT_TERMINATOR,
+    DirectoryEntry, FIELD_TERMINATOR, Iso8211Error, Leader, Reader, Result, UNIT_TERMINATOR,
 };
 use std::io::{Read, Seek};
 
@@ -60,7 +60,7 @@ pub(crate) mod tests {
 
     use crate::directory::tests::ascii_ddr_directory;
     use crate::{
-        ddr::FileControlField, Directory, Leader, Reader, Result, FIELD_TERMINATOR, UNIT_TERMINATOR,
+        Directory, FIELD_TERMINATOR, Leader, Reader, Result, UNIT_TERMINATOR, ddr::FileControlField,
     };
 
     pub fn ascii_file_control_field() -> Result<(Leader, Directory, FileControlField)> {

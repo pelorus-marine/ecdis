@@ -23,8 +23,8 @@ use std::fs;
 use std::io::{Read, Seek};
 
 use s_164::{
-    discover_exchange_sets, download_bytes, load_exchange_catalogue, resolve_bundle_path,
-    DEFAULT_TEST_DATA_ZIP_V1_2_0_URL,
+    DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, discover_exchange_sets, download_bytes,
+    load_exchange_catalogue, resolve_bundle_path,
 };
 use zip::ZipArchive;
 
