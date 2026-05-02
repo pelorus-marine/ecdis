@@ -1,0 +1,18 @@
+# pelorus-ecdis depends on ../../platform/pelorus-core (see pelorus-ecdis/Cargo.toml).
+# With the default Actions layout, ../../ is the directory above $GITHUB_WORKSPACE.
+name: Checkout platform sibling repo
+description: Clone pelorus-marine/platform beside the Actions workspace for path dependencies.
+runs:
+  using: composite
+  steps:
+    - name: Clone pelorus-marine/platform next to checkout
+      shell: bash
+      run: |
+        set -euo pipefail
+        PARENT="${GITHUB_WORKSPACE%/*}"
+        PLATFORM_DIR="${PARENT}/platform"
+        if [ -f "${PLATFORM_DIR}/pelorus-core/Cargo.toml" ]; then
+          echo "Using existing platform at ${PLATFORM_DIR}"
+          exit 0
+        fi
+        git clone --depth 1 https://github.com/pelorus-marine/platform.git "${PLATFORM_DIR}"

@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-platform-sibling
       - uses: dtolnay/rust-toolchain@stable
       - name: Install Wayland/EGL dev libs (Slint / ecdis-ui)
         run: |
@@ -28,13 +29,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.70.0
-      - run: cargo test -p iso8211 --verbose
+      # Outside the workspace: root workspace pulls pelorus-ecdis → pelorus-core (edition 2024 path deps).
+      # Copy isolates iso8211 so Cargo 1.70 only parses this crate's manifest.
+      - name: Test iso8211 at MSRV (standalone checkout)
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          cp -a "${{ github.workspace }}/iso8211" ./iso8211-msrv
+          cd ./iso8211-msrv
+          cargo test --verbose
 
   clippy:
     name: Clippy (workspace)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-platform-sibling
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -49,16 +59,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-platform-sibling
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
-      - run: cargo fmt --all -- --check
+      # Omit `--all`: it would recurse into path deps (pelorus-core/platform) outside this repo.
+      - run: cargo fmt -- --check
 
   doc:
     name: Docs (workspace)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-platform-sibling
       - uses: dtolnay/rust-toolchain@stable
       - name: Install Wayland/EGL dev libs (Slint / ecdis-ui)
         run: |
@@ -76,6 +89,7 @@ jobs:
       IHO_S164_CACHE_KEY: s64-v1.2.0
     steps:
       - uses: actions/checkout@v4
+      - uses: ./.github/actions/checkout-platform-sibling
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Cache IHO corpus zip
