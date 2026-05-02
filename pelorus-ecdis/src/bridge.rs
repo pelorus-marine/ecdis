@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use s_101::S101Dataset;
 
 use crate::{AisVesselReport, OwnShip};
@@ -7,7 +9,7 @@ use crate::{AisVesselReport, OwnShip};
 /// Rendering, alerts, and UKC computations stay **outside** this struct; it is a convenient
 /// bundle for services bridging **Pelorus Core** telemetry and **S-101** chart bytes.
 pub struct ChartNavContext {
-    pub chart: S101Dataset,
+    pub chart: Arc<S101Dataset>,
     pub own_ship: OwnShip,
     pub ais_targets: Vec<AisVesselReport>,
 }
@@ -15,7 +17,7 @@ pub struct ChartNavContext {
 impl ChartNavContext {
     pub fn new(chart: S101Dataset) -> Self {
         Self {
-            chart,
+            chart: Arc::new(chart),
             own_ship: OwnShip::default(),
             ais_targets: Vec::new(),
         }

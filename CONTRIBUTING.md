@@ -9,8 +9,18 @@ git clone <repository-url>
 cd ecdis
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
-cargo fmt --all -- --check
+After **`cargo test --workspace`** succeeds:
+
+```bash
+./scripts/fetch_s64_sample_enc.sh
+cargo run -p ecdis-ui --release -- target/iho-cache/sample_enc.000
 ```
+
+Optional FC XML for the HUD edition line: add a second argument (path to feature catalogue XML). VS Code: tasks **Fetch S-64 sample ENC** and **rust: run ecdis-ui …**, or launch presets under [`.vscode/launch.json`](.vscode/launch.json).
+
+Cross-compile **aarch64** with the Yocto SDK: see [`yocto/meta-pelorus-ecdis/README.md`](yocto/meta-pelorus-ecdis/README.md) (`rustup target add aarch64-unknown-linux-gnu`, `PKG_CONFIG_SYSROOT_DIR`, `BINDGEN_EXTRA_CLANG_ARGS`, etc., aligned to your sysroot).
+
+Workspace **`release`** profile uses **`lto = "thin"`**; **`ecdis-ui`** additionally sets **`codegen-units = 1`** for a smaller binary (longer compile).
 
 ## Code style
 

@@ -1,8 +1,13 @@
 [workspace]
 resolver = "2"
 members = [
+    "ecdis-behaviours",
+    "ecdis-portrayal",
+    "ecdis-runtime",
+    "ecdis-ui",
     "iso8211",
     "iho-testdata",
+    "pelorus-core-adapter",
     "pelorus-ecdis",
     "s-100",
     "s-101",
@@ -28,3 +33,9 @@ members = [
     "s-98",
     "s-99",
 ]
+
+[profile.release]
+lto = "thin"
+
+[profile.release.package.ecdis-ui]
+codegen-units = 1

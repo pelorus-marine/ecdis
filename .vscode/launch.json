@@ -1,0 +1,90 @@
+{
+  // Requires the "CodeLLDB" extension for Rust debugging / F5 launch.
+  // Run without debugger: use Tasks → "rust: run ecdis-ui (release)" or the terminal.
+  "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "encPath",
+      "type": "promptString",
+      "description": "Path to S-101 .000 ENC file",
+      "default": "${workspaceFolder}/target/iho-cache/sample_enc.000"
+    }
+  ],
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "ecdis-ui (iho-cache sample_enc.000)",
+      "cargo": {
+        "args": ["build", "--bin=ecdis-ui", "--package=ecdis-ui"],
+        "filter": {
+          "name": "ecdis-ui",
+          "kind": "bin"
+        }
+      },
+      "args": ["${workspaceFolder}/target/iho-cache/sample_enc.000"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "ecdis-ui (testdata/s101_sample.000)",
+      "cargo": {
+        "args": ["build", "--bin=ecdis-ui", "--package=ecdis-ui"],
+        "filter": {
+          "name": "ecdis-ui",
+          "kind": "bin"
+        }
+      },
+      "args": ["${workspaceFolder}/testdata/s101_sample.000"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "ecdis-ui (release, iho-cache sample)",
+      "cargo": {
+        "args": ["build", "--release", "--bin=ecdis-ui", "--package=ecdis-ui"],
+        "filter": {
+          "name": "ecdis-ui",
+          "kind": "bin"
+        }
+      },
+      "args": ["${workspaceFolder}/target/iho-cache/sample_enc.000"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "ecdis-ui (prompt ENC path)",
+      "cargo": {
+        "args": ["build", "--bin=ecdis-ui", "--package=ecdis-ui"],
+        "filter": {
+          "name": "ecdis-ui",
+          "kind": "bin"
+        }
+      },
+      "args": ["${input:encPath}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "ecdis-runtime (prompt ENC path)",
+      "cargo": {
+        "args": ["build", "--bin=ecdis-runtime", "--package=ecdis-runtime"],
+        "filter": {
+          "name": "ecdis-runtime",
+          "kind": "bin"
+        }
+      },
+      "args": ["${input:encPath}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

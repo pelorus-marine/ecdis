@@ -15,7 +15,9 @@ ISO 8211 files / records  →  `iso8211` (structure + raw fields)
         →  `s-100` (shared S-100 model constructs, where applicable)
         →  product crates (`s-101`, `s-102`, `s-103`, …) typed features / coverages
         →  `pelorus-ecdis` (ENC + own-ship / AIS snapshot for bridge services)
-        →  portrayal / full runtime (out of scope for parser crates)
+        →  `pelorus-core-adapter` (Core/Stream mapper traits + timestamps — no sockets)
+        →  `ecdis-portrayal` / `ecdis-behaviours` (presentation + nav-behaviour stubs)
+        →  `ecdis-runtime` (CLI composition demo) / `ecdis-ui` (Slint Wayland IVI shell)
 
 published test zip  →  `s-164` (inventory / catalogue slice only)  →  caller  →  `s-101` / product crates
 ```
@@ -34,13 +36,18 @@ Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable (
 |-----------|-----------|------|
 | [`iso8211/`](iso8211/) | ISO/IEC 8211 | Binary interchange (DDR / data records). |
 | [`iho-testdata/`](iho-testdata/) | — | End-to-end: S-164 corpus zip → S-101 `load_bytes` (orchestration only). |
+| [`ecdis-behaviours/`](ecdis-behaviours/) | — | ECDIS behaviour stubs (alarms, overscale predicate). |
+| [`ecdis-portrayal/`](ecdis-portrayal/) | — | Portrayal trait + [`ChartViewport`](ecdis-portrayal/src/chart_viewport.rs) stubs; AML execution TBD. |
+| [`ecdis-runtime/`](ecdis-runtime/) | — | Composition-root demo (`ecdis-runtime` binary). |
+| [`ecdis-ui/`](ecdis-ui/) | — | Slint ENC HUD + stub chart for Weston/Yocto targets — [`README`](ecdis-ui/README.md). |
+| [`pelorus-core-adapter/`](pelorus-core-adapter/) | — | Core/Stream sample → `pelorus-ecdis` snapshots (types only). |
 | [`pelorus-ecdis/`](pelorus-ecdis/) | — | [`s-101`](s-101/) + own-ship / AIS integration types. |
 | [`s-61/`](s-61/) | **S-61** | Raster Navigational Charts (RNC)—not S-100 vector. |
 | [`s-97/`](s-97/) | **S-97** | Guidelines for S-100 product specifications (stub). |
 | [`s-98/`](s-98/) | **S-98** | Data product interoperability (stub). |
 | [`s-99/`](s-99/) | **S-99** | GI registry operational procedures (stub). |
 | [`s-100/`](s-100/) | **S-100** | Universal Hydrographic Data Model framework (stub). |
-| [`s-101/`](s-101/) | **S-101** | ENC — ISO 8211 load + structural validation slice. |
+| [`s-101/`](s-101/) | **S-101** | ENC — ISO 8211 load + FRID inventory / edition pins (FC XML decode TBD). |
 | [`s-102/`](s-102/) | **S-102** | Bathymetric Surface (S-100 product; stub). |
 | [`s-103/`](s-103/) | **S-103** | Sub-surface Navigation (stub). |
 | [`s-104/`](s-104/) | **S-104** | Water Level Information for Surface Navigation (stub). |

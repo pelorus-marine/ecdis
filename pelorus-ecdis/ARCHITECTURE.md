@@ -27,7 +27,7 @@ Those belong in application or higher-level Pelorus services.
 
 ## Future work
 
-- Optional `Stream`-flavored timestamps on [`OwnShip`] for latency-aware fusion.
+- Optional `Stream`-flavored timestamps on [`OwnShip`] for latency-aware fusion — see [`pelorus-core-adapter`](../pelorus-core-adapter/).
 - Alignment tables documenting **DCID → field** mapping (lives in Pelorus specs or `dbc-rs` docs, referenced from here).
 - C API (`cbindgen`) only if a non-Rust stack requires it on Yocto — defer until product needs it.
 

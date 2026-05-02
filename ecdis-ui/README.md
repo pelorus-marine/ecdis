@@ -1,0 +1,42 @@
+# ecdis-ui
+
+**Slint** shell binary for loading **S-101** ENC `.000` cells and exercising [`ecdis-portrayal`](../ecdis-portrayal/) viewport hooks plus [`ecdis-behaviours`](../ecdis-behaviours/) alarm sinks.
+
+Chart geometry uses a fixed **880×420** logical viewbox (scaled to the chart rectangle): ENC **C2IL** polylines render as blue strokes; **demo stub** appears when the cell has no decodable chains. An **orange cross** marks own-ship when latitude/longitude fall inside the canvas (same projection as outlines).
+
+### Run (developer workstation)
+
+Requires Slint’s Linux build dependencies (Fontconfig, EGL/GL, Wayland client libs, etc. — see [Slint Rust setup](https://docs.slint.dev/latest/docs/rust/slint)).
+
+```bash
+cargo run -p ecdis-ui --release -- /path/to/cell.000
+# Optional FC XML path (edition triple shown in HUD):
+cargo run -p ecdis-ui --release -- /path/to/cell.000 /path/to/feature_catalogue.xml
+```
+
+Use zoom/pan buttons, **drag** on the chart (touch or mouse), or **scroll/wheel** on the chart for zoom. Logs use **`tracing`**; set e.g. `RUST_LOG=ecdis.nav=debug`.
+
+### Sample ENC (IHO S-64)
+
+From the repo root, either run the VS Code task **“Fetch S-64 sample ENC”** or:
+
+```bash
+./scripts/fetch_s64_sample_enc.sh
+cargo run -p ecdis-ui --release -- target/iho-cache/sample_enc.000
+```
+
+### Weston
+
+Run Weston (nested session or hardware), ensure `WAYLAND_DISPLAY` is exported in that shell, then start `ecdis-ui` from the same environment. Use your compositor or kiosk shell for fullscreen chrome (Slint’s public Rust API here does not toggle fullscreen).
+
+## Composition note
+
+The HUD mirrors [`pelorus-ecdis::ChartNavContext`](../pelorus-ecdis/) (**ENC via `Arc<S101Dataset>`**, own-ship snapshot, AIS vector stub): [`OwnShip`](../pelorus-ecdis/src/own_ship.rs) is filled from [`pelorus-core-adapter`](../pelorus-core-adapter/). Chart outlines come from [`CpuOutlinePortrayal`](../ecdis-portrayal/src/cpu_outline.rs) when the cell carries **C2IL** chains; otherwise the demo stub segments are shown.
+
+## Licensing
+
+Rust crate sources are **MIT OR Apache-2.0** per crate `LICENSE-*` files. The **Slint** dependency adds its **own** license terms — audit **GPL / royalty-free** Slint licensing before shipping firmware binaries.
+
+## See also
+
+- Yocto skeleton layer: [`yocto/meta-pelorus-ecdis/`](../yocto/meta-pelorus-ecdis/README.md)

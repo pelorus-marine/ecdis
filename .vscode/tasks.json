@@ -1,0 +1,45 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "iho: fetch DisplayBase sample ENC",
+      "type": "shell",
+      "command": "mkdir -p target/iho-cache && curl -fsSL -o target/iho-cache/S-64_1.2.0.zip \"https://github.com/iho-ohi/S-164-Sub-Group/releases/download/v1.2.0/S-64_1.2.0.zip\" && unzip -p target/iho-cache/S-64_1.2.0.zip 'S-100/DisplayBase/S100_ROOT/S-101/DATASET_FILES/10100AA_DBASE.000' > target/iho-cache/sample_enc.000 && ls -la target/iho-cache/sample_enc.000",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "detail": "Downloads IHO S-64 v1.2.0 zip and extracts one S-101 cell for ecdis-ui."
+    },
+    {
+      "label": "rust: build ecdis-ui (debug)",
+      "type": "shell",
+      "command": "cargo build -p ecdis-ui",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": ["$rustc"]
+    },
+    {
+      "label": "rust: build ecdis-ui (release)",
+      "type": "shell",
+      "command": "cargo build -p ecdis-ui --release",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "build",
+      "problemMatcher": ["$rustc"]
+    },
+    {
+      "label": "rust: run ecdis-ui (release, iho-cache sample)",
+      "type": "shell",
+      "command": "cargo run -p ecdis-ui --release -- \"${workspaceFolder}/target/iho-cache/sample_enc.000\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": ["$rustc"],
+      "detail": "No debugger — run Slint UI in integrated terminal."
+    }
+  ]
+}

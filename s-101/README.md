@@ -9,10 +9,10 @@
 **S-101** defines the **vector ENC product** in the **S-100** family. It replaces **S-57** ENC for new production in the IHO roadmap. This crate:
 
 - Reads exchange files via [`iso8211`](https://crates.io/crates/iso8211) (**ISO/IEC 8211**).
-- Validates an **S-101-shaped** dataset (DDR includes a **DSID** descriptive field; first data record has **DSID**).
-- Exposes **tag → payload** helpers for further decoding.
+- Validates an **S-101-shaped** dataset (DDR includes dataset identification; first data record carries **`DSID`** directory tag).
+- Exposes **tag → payload** helpers and an **FRID-based feature inventory** (`FeatureInventorySummary`) with a pinned **`TARGET_PRODUCT_SPECIFICATION_EDITION`** label.
 
-Full **feature geometry / attributes / portrayal** are **not** implemented yet.
+Full **feature catalogue XML** binding, geometry decode, attributes, and portrayal are **not** implemented yet.
 
 ## Quick start
 

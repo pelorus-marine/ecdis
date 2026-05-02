@@ -1,0 +1,208 @@
+import {
+    Button,
+    HorizontalBox,
+    ScrollView,
+    VerticalBox,
+} from "std-widgets.slint";
+
+export struct StubSeg {
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+}
+
+export component AppWindow inherits Window {
+    preferred-width: 960px;
+    preferred-height: 720px;
+    title: "Pelorus ECDIS (demo)";
+
+    in-out property <string> enc-path-label;
+    in-out property <string> edition-label;
+    in-out property <string> inventory-label;
+    in-out property <string> own-ship-label;
+    in-out property <string> viewport-label;
+    in-out property <string> chart-visual-label;
+    in-out property <string> alarm-log;
+    in-out property <float> chart-width;
+    in-out property <float> chart-height;
+    in-out property <[StubSeg]> stub-segments;
+    in-out property <float> own-ship-marker-x;
+    in-out property <float> own-ship-marker-y;
+    in-out property <bool> own-ship-marker-visible;
+
+    private property <length> chart-pan-last-x: 0px;
+    private property <length> chart-pan-last-y: 0px;
+
+    callback zoom-in();
+    callback zoom-out();
+    callback pan-west();
+    callback pan-east();
+    callback pan-north();
+    callback pan-south();
+    callback chart-pan-pixel(dx: length, dy: length);
+    callback chart-zoom-wheel(delta-y: length);
+
+    VerticalBox {
+        padding: 12px;
+        spacing: 8px;
+
+        Text {
+            text: root.enc-path-label;
+            wrap: word-wrap;
+            font-size: 13px;
+        }
+
+        HorizontalBox {
+            spacing: 8px;
+            Text {
+                text: root.edition-label;
+                font-size: 12px;
+            }
+
+            Text {
+                text: root.inventory-label;
+                font-size: 12px;
+            }
+        }
+
+        Text {
+            text: root.own-ship-label;
+            font-size: 13px;
+        }
+
+        Text {
+            text: root.viewport-label;
+            font-size: 13px;
+            color: #335588;
+        }
+
+        HorizontalBox {
+            spacing: 6px;
+            Button {
+                text: "Zoom −";
+                clicked => {
+                    root.zoom-out();
+                }
+            }
+
+            Button {
+                text: "Zoom +";
+                clicked => {
+                    root.zoom-in();
+                }
+            }
+
+            Button {
+                text: "◀";
+                clicked => {
+                    root.pan-west();
+                }
+            }
+
+            Button {
+                text: "▶";
+                clicked => {
+                    root.pan-east();
+                }
+            }
+
+            Button {
+                text: "▲";
+                clicked => {
+                    root.pan-north();
+                }
+            }
+
+            Button {
+                text: "▼";
+                clicked => {
+                    root.pan-south();
+                }
+            }
+        }
+
+        Rectangle {
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+            border-width: 1px;
+            border-color: #444444;
+            background: #0e141c;
+
+            TouchArea {
+                width: 100%;
+                height: 100%;
+
+                scroll-event(event) => {
+                    root.chart-zoom-wheel(event.delta-y);
+                    return accept;
+                }
+
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.down) {
+                        root.chart-pan-last-x = self.mouse-x;
+                        root.chart-pan-last-y = self.mouse-y;
+                    }
+                }
+
+                moved => {
+                    if (self.pressed) {
+                        root.chart-pan-pixel(self.mouse-x - root.chart-pan-last-x, self.mouse-y - root.chart-pan-last-y);
+                        root.chart-pan-last-x = self.mouse-x;
+                        root.chart-pan-last-y = self.mouse-y;
+                    }
+                }
+
+                for seg in root.stub-segments: Path {
+                    width: 100%;
+                    height: 100%;
+                    // Must match ecdis_portrayal::UI_CHART_VIEWBOX_* (Rust projects geometry here).
+                    viewbox-width: 880px / 1px;
+                    viewbox-height: 420px / 1px;
+                    commands: "M \{seg.x1} \{seg.y1} L \{seg.x2} \{seg.y2}";
+                    stroke-width: 2px;
+                    stroke: #6ca0d4;
+                    fill: transparent;
+                }
+
+                if root.own-ship-marker-visible: Path {
+                    width: 100%;
+                    height: 100%;
+                    viewbox-width: 880px / 1px;
+                    viewbox-height: 420px / 1px;
+                    commands: "M \{root.own-ship-marker-x - 10} \{root.own-ship-marker-y} L \{root.own-ship-marker-x + 10} \{root.own-ship-marker-y} M \{root.own-ship-marker-x} \{root.own-ship-marker-y - 10} L \{root.own-ship-marker-x} \{root.own-ship-marker-y + 10}";
+                    stroke-width: 3px;
+                    stroke: #ffaa44;
+                    fill: transparent;
+                }
+
+                Text {
+                    x: 10px;
+                    y: 8px;
+                    width: parent.width - 20px;
+                    text: root.chart-visual-label;
+                    wrap: word-wrap;
+                    font-size: 11px;
+                    color: #aabbcc;
+                }
+            }
+        }
+
+        Text {
+            text: "Nav alerts (stub)";
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        ScrollView {
+            vertical-stretch: 0;
+            preferred-height: 120px;
+            Text {
+                text: root.alarm-log;
+                wrap: word-wrap;
+                font-size: 11px;
+                color: #aa6644;
+            }
+        }
+    }
+}

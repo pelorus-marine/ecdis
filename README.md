@@ -18,6 +18,8 @@ ecdis/
   testdata/          # optional s101_sample.000 — see testdata/README.md
   iso8211/
   pelorus-ecdis/     # S-101 + own-ship / AIS integration types (no CAN stack in-crate)
+  ecdis-ui/          # Slint Wayland ENC HUD — see ecdis-ui/README.md
+  yocto/             # Companion BitBake stubs — see yocto/meta-pelorus-ecdis/README.md
   s-100/ … s-129/    # IHO products (s-103 = sub-surface navigation; s-101 = ENC slice)
 ```
 
@@ -25,7 +27,8 @@ Full crate table: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
 
-- Rust **stable** (see `rust-toolchain.toml`: `rustfmt`, `clippy`)
+- Rust **stable** (see `rust-toolchain.toml`: `rustfmt`, `clippy`). **`ecdis-ui`** follows Slint’s MSRV (**Rust ≥ 1.88** with Slint 1.16.x).
+- Linux dev libraries for Slint (`fontconfig`, Wayland, EGL/Mesa, …) — [`ecdis-ui/README.md`](ecdis-ui/README.md).
 
 ## Common commands
 
@@ -44,6 +47,9 @@ RUSTDOCFLAGS='-D warnings' cargo doc --workspace --no-deps --open
 
 # Example: ISO 8211 structure dump
 cargo run -p iso8211 --example print -- path/to/file.000
+
+# Example: Slint ENC HUD (Wayland/X11 session + dev libs — see ecdis-ui/README.md)
+cargo run -p ecdis-ui --release -- path/to/cell.000
 ```
 
 ## Crate docs

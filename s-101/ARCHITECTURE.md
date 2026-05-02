@@ -9,13 +9,15 @@ Provide **typed access** to **S-101 ENC** datasets: load **ISO 8211** exchange f
 | Module | Role |
 |--------|------|
 | `error.rs` | [`S101Error`](src/error.rs) — `thiserror` wrapper over [`iso8211::Iso8211Error`] plus structural validation failures. |
+| `edition.rs` | Pinned product specification edition ([`TARGET_PRODUCT_SPECIFICATION_EDITION`](src/edition.rs)). |
+| `semantic.rs` | FRID inventory ([`FeatureInventorySummary`](src/semantic.rs)); FC XML parsing **not** implemented yet. |
 | `dataset.rs` | [`S101Dataset`](src/dataset.rs) — `load`, `load_bytes`, `from_iso8211_file`, `record_count`, `first_record_dsid_payload`. |
 | `decode.rs` | [`record_field_payload`](src/decode.rs) / [`field_payload`] — map directory **tags** to `user_data` bytes. |
 
 ## Boundaries
 
 - **In scope (future):** Full feature / information types, geometry, RCID/FOID graphs, catalogue-driven validation.
-- **Out of scope:** **Portrayal** (S-100 portrayal / AML); **FAFF** / permits; **Pelorus Core** wiring — use [`pelorus-ecdis`](../pelorus-ecdis/) for own-ship + chart bundles.
+- **Out of scope:** **Portrayal** (S-100 portrayal / AML); **FAFF** / permits; **Pelorus Core transports** — use [`pelorus-ecdis`](../pelorus-ecdis/) for snapshots and [`pelorus-core-adapter`](../pelorus-core-adapter/) for mapper/time scaffolding.
 - **Out of scope (conformance harness):** IHO **S-164** zip corpora, exchange-set discovery, **`CATALOG.XML`** routing, GitHub release URLs, mapping manual sections or scenarios to bundles — that is **[`s-164`](../s-164/)** and **callers**.
 - **Relationship to [`s-164`](../s-164/):** `s-101` accepts **ENC interchange** as paths or bytes via [`iso8211`](../iso8211/). Callers combine `s-164` output (paths/metadata) with `s-101`; **`s-101` must not depend on `s-164`.**
 

@@ -1,0 +1,19 @@
+# Example meta-rust recipe fragment — paste into your distro layer after validating against your
+# `cargo.bbclass` revision (install paths and variable names differ across Yocto releases).
+#
+# SUMMARY = "Pelorus ECDIS Slint UI binary"
+# LICENSE = "MIT | Apache-2.0"
+# LIC_FILES_CHKSUM = " \
+#     file://${S}/ecdis-ui/LICENSE-MIT;md5=e1aa2d983f3785b02342740aabe5b7d9 \
+#     file://${S}/ecdis-ui/LICENSE-APACHE;md5=f424aae774b9431ce9d3f5be7c7de503 \
+# "
+#
+# inherit cargo
+#
+# SRC_URI = "git://github.com/pelorus-marine/ecdis.git;protocol=https;branch=main"
+# SRCREV ?= "${AUTOREV}"
+# S = "${WORKDIR}/git"
+#
+# CARGO_BUILD_FLAGS = "--locked --package ecdis-ui"
+#
+# # RDEPENDS/DEPENDS: add clang-native, fontconfig, imx GPU stacks per BSP README guidance.

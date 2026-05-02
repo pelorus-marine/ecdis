@@ -1,0 +1,22 @@
+[package]
+name = "ecdis-runtime"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "Composition-root demo: ENC load + ChartNavContext + portrayal/behaviour stubs."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+publish = false
+
+[[bin]]
+name = "ecdis-runtime"
+path = "src/main.rs"
+
+[dependencies]
+ecdis-behaviours = { path = "../ecdis-behaviours" }
+ecdis-portrayal = { path = "../ecdis-portrayal" }
+pelorus-core-adapter = { path = "../pelorus-core-adapter" }
+pelorus-ecdis = { path = "../pelorus-ecdis" }
+s-101 = { path = "../s-101" }

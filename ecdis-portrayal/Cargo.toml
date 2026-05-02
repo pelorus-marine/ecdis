@@ -1,0 +1,14 @@
+[package]
+name = "ecdis-portrayal"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "Portrayal pipeline traits for S-101 charts (AML integration stub)."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+publish = false
+
+[dependencies]
+s-101 = { path = "../s-101" }

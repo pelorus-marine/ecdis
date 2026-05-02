@@ -18,8 +18,19 @@
 
 mod dataset;
 mod decode;
+pub mod edition;
 mod error;
+pub mod fc_catalog;
+pub mod geometry;
+pub mod semantic;
 
 pub use dataset::S101Dataset;
 pub use decode::{field_payload, record_field_payload};
+pub use edition::{FEATURE_CATALOGUE_BINDING_NOTE, TARGET_PRODUCT_SPECIFICATION_EDITION};
 pub use error::S101Error;
+pub use fc_catalog::{parse_fc_edition_summary, FcCatalogParseError, FcEditionSummary};
+pub use geometry::{
+    decode_c2il_integer_pairs, extract_c2il_polylines_wgs84, parse_dssi_integer_crs,
+    trim_iso8211_unit_term, IntegerCrsParameters,
+};
+pub use semantic::{FeatureCataloguePin, FeatureInventorySummary, RawFeatureRecordRef};

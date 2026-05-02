@@ -1,0 +1,14 @@
+[package]
+name = "pelorus-core-adapter"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.70"
+authors = ["René Herrero <https://github.com/reneherrero>"]
+description = "Types and traits mapping Pelorus Core / Stream samples into pelorus-ecdis snapshots (no transports)."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+publish = false
+
+[dependencies]
+pelorus-ecdis = { path = "../pelorus-ecdis" }

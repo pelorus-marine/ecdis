@@ -1,0 +1,14 @@
+[Unit]
+Description=Pelorus ECDIS UI (Slint / Wayland client)
+After=weston.service
+Wants=weston.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/ecdis-ui
+Environment=WAYLAND_DISPLAY=wayland-0
+ExecStart=/usr/bin/ecdis-ui ${ECDUI_ENC_PATH}
+Restart=on-failure
+
+[Install]
+WantedBy=graphical.target
