@@ -94,14 +94,17 @@ fn refresh_panel(
     );
     ui.set_own_ship_label(
         format!(
-            "Own ship  lat={:?}  lon={:?}  SOG m/s={:?}  COG°={:?}",
+            "Own ship  lat={:?}  lon={:?}  SOG m/s={:?}  COG°={:?}  HDG°={:?}  depth m={:?}",
             ctx.own_ship.lat_deg,
             ctx.own_ship.lon_deg,
             ctx.own_ship.sog_mps,
-            ctx.own_ship.cog_true_deg
+            ctx.own_ship.cog_true_deg,
+            ctx.own_ship.heading_true_deg,
+            ctx.own_ship.depth_m,
         )
         .into(),
     );
+    ui.set_vdr_status_label(ctx.vdr_status_line.as_str().into());
     ui.set_viewport_label(
         format!(
             "Viewport  centre λ={:.5}° φ={:.5}°  scale 1:{}  |  C2IL chains={}  CMF≈{}",
@@ -126,12 +129,12 @@ fn refresh_panel(
 
     let chart_visual_label = if live_enc {
         format!(
-            "Chart ({}×{} px): ENC C2IL outlines — {} chain(s), {} line segment(s). Orange cross = own ship when on canvas.",
+            "Chart ({}×{} px): ENC C2IL outlines — {} chain(s), {} line segment(s). Orange cross = own ship; cyan line = heading true when available.",
             vw as i32, vh as i32, chains, outline_len
         )
     } else {
         format!(
-            "Chart ({}×{} px): demo stub (no C2IL in this cell). {} symbolic segments. Try IHO S-64 DisplayBase for real outlines. Orange cross = own ship when on canvas.",
+            "Chart ({}×{} px): demo stub (no C2IL in this cell). {} symbolic segments. Try IHO S-64 DisplayBase for real outlines. Orange cross = own ship; cyan = heading.",
             vw as i32,
             vh as i32,
             segs.len()
@@ -158,6 +161,22 @@ fn refresh_panel(
     ui.set_own_ship_marker_visible(own_ship_show);
     ui.set_own_ship_marker_x(own_ship_x);
     ui.set_own_ship_marker_y(own_ship_y);
+
+    let mut heading_show = false;
+    let mut hx2 = 0.0_f32;
+    let mut hy2 = 0.0_f32;
+    if own_ship_show {
+        if let Some(hdg) = ctx.own_ship.heading_true_deg {
+            let rad = hdg.to_radians();
+            let len = 56.0_f64;
+            hx2 = own_ship_x + (len * rad.sin()) as f32;
+            hy2 = own_ship_y - (len * rad.cos()) as f32;
+            heading_show = true;
+        }
+    }
+    ui.set_own_ship_heading_visible(heading_show);
+    ui.set_own_ship_heading_x2(hx2);
+    ui.set_own_ship_heading_y2(hy2);
 
     ui.set_stub_segments(ModelRc::new(VecModel::from(segs)));
 }
@@ -196,6 +215,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         OwnShip::with_position(51.0, 2.0),
         OwnShip {
             sog_mps: Some(3.0),
+            heading_true_deg: Some(42.0),
+            depth_m: Some(8.5),
             ..Default::default()
         },
     );

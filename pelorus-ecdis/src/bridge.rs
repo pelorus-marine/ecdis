@@ -13,6 +13,8 @@ pub struct ChartNavContext {
     pub chart: Arc<S101Dataset>,
     pub own_ship: OwnShip,
     pub ais_targets: Vec<AisVesselReport>,
+    /// Voyage recorder status line for ECDIS HUD (integrate [`pelorus_vdr`](https://github.com/pelorus-marine/platform/tree/main/pelorus-vdr) when deployed).
+    pub vdr_status_line: String,
 }
 
 impl ChartNavContext {
@@ -21,6 +23,7 @@ impl ChartNavContext {
             chart: Arc::new(chart),
             own_ship: OwnShip::default(),
             ais_targets: Vec::new(),
+            vdr_status_line: String::from("VDR: offline (run pelorus-vdr service when integrated)"),
         }
     }
 
@@ -37,6 +40,11 @@ impl ChartNavContext {
 
     pub fn with_ais_targets(mut self, targets: Vec<AisVesselReport>) -> Self {
         self.ais_targets = targets;
+        self
+    }
+
+    pub fn with_vdr_status_line(mut self, line: impl Into<String>) -> Self {
+        self.vdr_status_line = line.into();
         self
     }
 
