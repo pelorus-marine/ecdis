@@ -27,6 +27,8 @@ use s_101::S101Dataset;
 
 fn main() -> Result<(), s_101::S101Error> {
     let enc = S101Dataset::load("path/to/dataset.000")?;
+    // Or from bytes (e.g. zip member):
+    // let enc = S101Dataset::load_bytes(&buf)?;
     println!("records: {}", enc.record_count());
     Ok(())
 }

@@ -9,7 +9,7 @@ Provide **typed access** to **S-101 ENC** datasets: load **ISO 8211** exchange f
 | Module | Role |
 |--------|------|
 | `error.rs` | [`S101Error`](src/error.rs) — `thiserror` wrapper over [`iso8211::Iso8211Error`] plus structural validation failures. |
-| `dataset.rs` | [`S101Dataset`](src/dataset.rs) — `load` / `from_iso8211_file`, `record_count`, `first_record_dsid_payload`. |
+| `dataset.rs` | [`S101Dataset`](src/dataset.rs) — `load`, `load_bytes`, `from_iso8211_file`, `record_count`, `first_record_dsid_payload`. |
 | `decode.rs` | [`record_field_payload`](src/decode.rs) / [`field_payload`] — map directory **tags** to `user_data` bytes. |
 
 ## Boundaries
@@ -24,7 +24,7 @@ Provide **typed access** to **S-101 ENC** datasets: load **ISO 8211** exchange f
 ## Parsing strategy
 
 1. **Structural:** [`iso8211::DataDescriptiveFile::read`].
-2. **Validation:** DDR lists a DDF named **`DSID`**; first data record includes a **`DSID`** directory field.
+2. **Validation:** DDR lists a descriptive field for dataset identification (**`DSID`** short record label and **`Data Set Identification`** long field name on published exchanges); first data record includes a **`DSID`** directory tag.
 3. **Semantic (next):** Interpret DSID and feature fields per IHO **S-101** edition / feature catalogue.
 
 ## Testing

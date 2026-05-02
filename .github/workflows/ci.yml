@@ -55,3 +55,31 @@ jobs:
       - env:
           RUSTDOCFLAGS: -D warnings
         run: cargo doc --workspace --no-deps
+
+  iho-testdata:
+    name: IHO corpus integration (S-164 zip → S-101)
+    runs-on: ubuntu-latest
+    env:
+      IHO_S164_URL: https://github.com/iho-ohi/S-164-Sub-Group/releases/download/v1.2.0/S-64_1.2.0.zip
+      IHO_S164_CACHE_KEY: s64-v1.2.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache IHO corpus zip
+        id: iho-cache
+        uses: actions/cache@v4
+        with:
+          path: target/iho-cache/S-64_1.2.0.zip
+          key: ${{ runner.os }}-iho-testdata-${{ env.IHO_S164_CACHE_KEY }}
+
+      - name: Download corpus (cache miss)
+        if: steps.iho-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p target/iho-cache
+          curl -fsSL -o target/iho-cache/S-64_1.2.0.zip "$IHO_S164_URL"
+
+      - name: Integration test (thresholds in expectations/)
+        env:
+          IHO_TESTDATA_ZIP: ${{ github.workspace }}/target/iho-cache/S-64_1.2.0.zip
+        run: cargo test -p iho-testdata s64_corpus_meets_thresholds --verbose -- --ignored --nocapture

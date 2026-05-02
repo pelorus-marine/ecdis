@@ -10,7 +10,7 @@ Download published **S-164** corpus archives (zip), discover **`S100_ROOT/CATALO
 
 **`s-164` does not own:** ISO 8211 semantics; S-101 (or other product) structural or feature decoding; portrayal; ECDIS runtime behaviour; interpreting the conformance manual (pass/fail per scenario); cryptographic verification of `CATALOG.SIGN` (if added later, treat as an explicitly bounded submodule or separate concern).
 
-**Orchestration:** Any workflow such as “resolve member path in zip → feed ENC bytes to a product decoder → assert expectations” belongs **above** this crate: `examples/`, crate `tests/`, applications, or a **future crate** that depends on both `s-164` and a product library. **`s-164` must not depend on [`s-101`](../s-101/) or other product crates.**
+**Orchestration:** Any workflow such as “resolve member path in zip → feed ENC bytes to a product decoder → assert expectations” belongs **above** this crate: `examples/`, crate `tests/`, applications, or **[`iho-testdata`](../iho-testdata/)** (workspace binary). **`s-164` must not depend on [`s-101`](../s-101/) or other product crates.**
 
 ```mermaid
 flowchart LR

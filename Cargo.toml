@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "iso8211",
+    "iho-testdata",
     "pelorus-ecdis",
     "s-100",
     "s-101",

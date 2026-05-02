@@ -1,3 +1,4 @@
+use std::io::{BufReader, Cursor};
 use std::path::Path;
 
 use iso8211::DataDescriptiveFile;
@@ -18,6 +19,13 @@ impl S101Dataset {
     /// Read an exchange file from disk (`.000`, etc.).
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, S101Error> {
         let inner = DataDescriptiveFile::read(path)?;
+        validate_s101_structure(&inner)?;
+        Ok(Self { inner })
+    }
+
+    /// Parse ENC exchange bytes (for example from a zip member or memory-mapped file).
+    pub fn load_bytes(bytes: &[u8]) -> Result<Self, S101Error> {
+        let inner = DataDescriptiveFile::read_buf(BufReader::new(Cursor::new(bytes)))?;
         validate_s101_structure(&inner)?;
         Ok(Self { inner })
     }
@@ -52,7 +60,13 @@ impl S101Dataset {
 fn validate_s101_structure(ddf: &DataDescriptiveFile) -> Result<(), S101Error> {
     let ddr = ddf.data_descriptive_record();
 
-    let has_dsid_ddf = ddr.data_descriptive_fields().iter().any(|f| f.field_name() == "DSID");
+    let has_dsid_ddf = ddr.data_descriptive_fields().iter().any(|f| {
+        matches!(
+            f.field_name(),
+            // Older sample naming vs IHO long labels on exchange datasets.
+            "DSID" | "Data Set Identification"
+        )
+    });
 
     if !has_dsid_ddf {
         return Err(S101Error::NotS101Dataset);
@@ -75,4 +89,23 @@ fn validate_s101_structure(ddf: &DataDescriptiveFile) -> Result<(), S101Error> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    #[test]
+    fn load_bytes_matches_load_when_fixture_present() {
+        let path =
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../testdata/s101_sample.000");
+        if !path.exists() {
+            return;
+        }
+        let from_disk = S101Dataset::load(&path).unwrap();
+        let bytes = std::fs::read(&path).unwrap();
+        let from_mem = S101Dataset::load_bytes(&bytes).unwrap();
+        assert_eq!(from_disk.record_count(), from_mem.record_count());
+    }
 }

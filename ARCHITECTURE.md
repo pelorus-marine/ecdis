@@ -24,7 +24,7 @@ Product crates may depend on `iso8211` and `s-100` as the workspace matures; dep
 
 ## Conformance test corpora vs product decode
 
-[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in binaries, tests, applications, or a future harness crate that depends on both. Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
+[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in binaries, tests, applications, or **[`iho-testdata`](iho-testdata/)** (example orchestration binary). Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
 
 ## Crates
 
@@ -33,6 +33,7 @@ Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable (
 | Directory | IHO / ISO | Role |
 |-----------|-----------|------|
 | [`iso8211/`](iso8211/) | ISO/IEC 8211 | Binary interchange (DDR / data records). |
+| [`iho-testdata/`](iho-testdata/) | — | End-to-end: S-164 corpus zip → S-101 `load_bytes` (orchestration only). |
 | [`pelorus-ecdis/`](pelorus-ecdis/) | — | [`s-101`](s-101/) + own-ship / AIS integration types. |
 | [`s-61/`](s-61/) | **S-61** | Raster Navigational Charts (RNC)—not S-100 vector. |
 | [`s-97/`](s-97/) | **S-97** | Guidelines for S-100 product specifications (stub). |
