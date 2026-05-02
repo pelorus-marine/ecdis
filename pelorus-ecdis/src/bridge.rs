@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use pelorus_core::OwnShipSnapshot;
 use s_101::S101Dataset;
 
 use crate::{AisVesselReport, OwnShip};
@@ -28,6 +29,12 @@ impl ChartNavContext {
         self
     }
 
+    /// Convenience: convert [`OwnShipSnapshot`](pelorus_core::OwnShipSnapshot) into chart-ready [`OwnShip`].
+    pub fn with_own_ship_snapshot(mut self, snap: OwnShipSnapshot) -> Self {
+        self.own_ship = snap.into();
+        self
+    }
+
     pub fn with_ais_targets(mut self, targets: Vec<AisVesselReport>) -> Self {
         self.ais_targets = targets;
         self
@@ -41,6 +48,7 @@ impl ChartNavContext {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::OwnShipSnapshot;
     use s_101::S101Dataset;
 
     #[test]
@@ -55,5 +63,19 @@ mod tests {
         let ctx = ChartNavContext::new(chart).with_own_ship(OwnShip::with_position(51.0, 2.0));
         assert!(ctx.chart_record_count() > 0);
         assert_eq!(ctx.own_ship.lat_deg, Some(51.0));
+    }
+
+    #[test]
+    fn context_accepts_own_ship_snapshot() {
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../testdata/s101_sample.000");
+        if !path.exists() {
+            return;
+        }
+        let chart = S101Dataset::load(path).unwrap();
+        let snap = OwnShipSnapshot::with_position(12.5, -44.25);
+        let ctx = ChartNavContext::new(chart).with_own_ship_snapshot(snap);
+        assert_eq!(ctx.own_ship.lat_deg, Some(12.5));
+        assert_eq!(ctx.own_ship.lon_deg, Some(-44.25));
     }
 }

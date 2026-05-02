@@ -19,6 +19,27 @@ pub struct OwnShip {
     pub depth_m: Option<f64>,
 }
 
+const KN_TO_MPS: f64 = 1852.0 / 3600.0;
+
+impl From<pelorus_core::OwnShipSnapshot> for OwnShip {
+    fn from(s: pelorus_core::OwnShipSnapshot) -> Self {
+        (&s).into()
+    }
+}
+
+impl From<&pelorus_core::OwnShipSnapshot> for OwnShip {
+    fn from(s: &pelorus_core::OwnShipSnapshot) -> Self {
+        Self {
+            lat_deg: s.lat_deg,
+            lon_deg: s.lon_deg,
+            cog_true_deg: s.cog_true_deg,
+            sog_mps: s.sog_kn.map(|kn| kn * KN_TO_MPS),
+            heading_true_deg: s.heading_true_deg,
+            depth_m: s.depth_m,
+        }
+    }
+}
+
 impl OwnShip {
     pub fn with_position(lat_deg: f64, lon_deg: f64) -> Self {
         Self {

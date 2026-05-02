@@ -16,3 +16,6 @@ mod own_ship;
 pub use ais::AisVesselReport;
 pub use bridge::ChartNavContext;
 pub use own_ship::OwnShip;
+
+#[doc(inline)]
+pub use pelorus_core::OwnShipSnapshot;

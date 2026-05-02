@@ -875,6 +875,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be1e0bca6c3637f992fc1cc7cbc52a78c1ef6db076dbf1059c4323d6a2048376"
 
 [[package]]
+name = "dbc-rs"
+version = "0.5.0"
+
+[[package]]
 name = "derive_arbitrary"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2612,6 +2616,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mdf4-rs"
+version = "0.3.0"
+dependencies = [
+ "dbc-rs",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "memchr"
 version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3316,6 +3329,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "35fb2e5f958ec131621fdd531e9fc186ed768cbe395337403ae56c17a74c68ec"
 
 [[package]]
+name = "pelorus-core"
+version = "0.1.0"
+dependencies = [
+ "dbc-rs",
+ "mdf4-rs",
+]
+
+[[package]]
 name = "pelorus-core-adapter"
 version = "0.0.1"
 dependencies = [
@@ -3326,6 +3347,7 @@ dependencies = [
 name = "pelorus-ecdis"
 version = "0.0.1"
 dependencies = [
+ "pelorus-core",
  "s-101",
 ]
 
