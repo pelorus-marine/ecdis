@@ -9,7 +9,9 @@ git clone <repository-url>
 cd ecdis
 cargo test --workspace
 cargo clippy --workspace --all-targets -- -D warnings
-After **`cargo test --workspace`** succeeds:
+```
+
+After `cargo test --workspace` succeeds:
 
 ```bash
 ./scripts/fetch_s64_sample_enc.sh
@@ -24,9 +26,19 @@ Workspace **`release`** profile uses **`lto = "thin"`**; **`ecdis-ui`** addition
 
 ## Code style
 
-- Run **`cargo fmt --all`** (`rustfmt.toml` at workspace root).
+- Run **`cargo fmt --all`** (`rustfmt.toml` at workspace root). **Keep settings aligned with** [`platform` / `dbc-rs/rustfmt.toml`](https://github.com/pelorus-marine/platform/blob/main/dbc-rs/rustfmt.toml); that tree is the Pelorus-wide rustfmt reference (this repo intentionally mirrors it).
 - Use **`cargo clippy --workspace --all-targets -- -D warnings`** before committing.
 - New crates follow the **`dbc-rs` ergonomics** pattern: `#![forbid(unsafe_code)]`, dual `LICENSE-*` files in the crate directory, `repository` + `license` set for `cargo publish`.
+
+## Continuous integration (Rust / GitHub Actions)
+
+Canonical workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+- **Toolchain:** **stable** Rust (via `dtolnay/rust-toolchain@stable`), not pinned to the same minor as `platform/` — ecdis tracks current stable for the Slint/UI stack while staying compatible with **`platform`** as a path sibling.
+- **Clippy:** `cargo clippy --workspace --all-targets -- -D warnings` **without `--all-features`** — feature combinations are exercised via normal `cargo test` and crate-local configs; full `--all-features` across the workspace is intentionally avoided here to reduce redundant / conflicting feature graphs.
+- **Rustfmt:** `cargo fmt -- --check` **without `--all`** — using `cargo fmt --all` would recurse into **path dependencies** checked out beside this repo (`platform/` / `pelorus-core`), which live outside **`ecdis/`** Git boundaries.
+- **Docs:** `cargo doc --workspace --no-deps` (no `--all-features`) with `RUSTDOCFLAGS=-D warnings`, consistent with clippy scope.
+- **`dbc-rs` duplication:** crates from **`platform`** (`dbc-rs`, etc.) are also tested in **`platform/.github/workflows/ci.yml`** when developed there. Runs in **this** repo are for **ecdis-integration** and release hygiene; fixing the same lint in both places is normal when **`platform`** is a path dependency checkout.
 
 ## Architecture docs
 
