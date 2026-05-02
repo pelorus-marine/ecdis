@@ -2,7 +2,7 @@
 name = "iso8211"
 version = "0.1.5"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "ISO 8211 data format parsing library (IHO S-57 / S-100 family exchange format)"
 documentation = "https://docs.rs/iso8211"

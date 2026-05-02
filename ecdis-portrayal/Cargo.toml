@@ -2,7 +2,7 @@
 name = "ecdis-portrayal"
 version = "0.0.1"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "Portrayal pipeline traits for S-101 charts (AML integration stub)."
 readme = "README.md"

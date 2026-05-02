@@ -27,14 +27,14 @@ Full crate table: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
 
-- Rust **stable** (see `rust-toolchain.toml`: `rustfmt`, `clippy`). **`ecdis-ui`** follows Slint’s MSRV (**Rust ≥ 1.88** with Slint 1.16.x).
+- Rust **stable** **≥ 1.88** (see `rust-toolchain.toml`: `rustfmt`, `clippy`): matches **`ecdis-ui`** / Slint and **`pelorus-ecdis`** pulling **`pelorus-core`** from **`pelorus-marine/platform`**.
 - Linux dev libraries for Slint (`fontconfig`, Wayland, EGL/Mesa, …) — [`ecdis-ui/README.md`](ecdis-ui/README.md).
 
 ## Common commands
 
 ```bash
-# Format
-cargo fmt --all
+# Format (workspace only; avoids formatting sibling `pelorus-platform` path deps)
+cargo fmt
 
 # Test entire workspace
 cargo test --workspace --verbose

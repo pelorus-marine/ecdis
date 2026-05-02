@@ -2,7 +2,7 @@
 name = "iho-testdata"
 version = "0.0.1"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "End-to-end IHO S-164 corpus fetch plus S-101 ENC parse (orchestration library + binary + CI integration tests)."
 readme = "README.md"

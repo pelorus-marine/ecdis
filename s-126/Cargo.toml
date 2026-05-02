@@ -2,7 +2,7 @@
 name = "s-126"
 version = "0.0.1"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "IHO S-126 (Marine physical environment) — Rust placeholder."
 readme = "README.md"

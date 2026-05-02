@@ -2,7 +2,7 @@
 name = "ecdis-behaviours"
 version = "0.0.1"
 edition = "2021"
-rust-version = "1.70"
+rust-version = "1.88"
 authors = ["René Herrero <https://github.com/reneherrero>"]
 description = "ECDIS-oriented behaviour stubs (overscale, alarms) — IMO logic incremental."
 readme = "README.md"
