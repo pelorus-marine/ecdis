@@ -34,9 +34,9 @@ Workspace **`release`** profile uses **`lto = "thin"`**; **`ecdis-ui`** addition
 
 Canonical workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-- **Toolchain:** **stable** Rust (via `dtolnay/rust-toolchain@stable`), not pinned to the same minor as `platform/` — ecdis tracks current stable for the Slint/UI stack while staying compatible with **`platform`** as a path sibling.
+- **Toolchain:** Rust **`1.88.0`** (via `dtolnay/rust-toolchain@master` + `rust-toolchain.toml`), aligned with **`platform`** / **`specifications`** for reproducible CI and local `rustfmt` / `clippy`.
 - **Clippy:** `cargo clippy --workspace --all-targets -- -D warnings` **without `--all-features`** — feature combinations are exercised via normal `cargo test` and crate-local configs; full `--all-features` across the workspace is intentionally avoided here to reduce redundant / conflicting feature graphs.
-- **Rustfmt:** `cargo fmt -- --check` **without `--all`** — using `cargo fmt --all` would recurse into **path dependencies** checked out beside this repo (`platform/` / `pelorus-core`), which live outside **`ecdis/`** Git boundaries.
+- **Rustfmt:** `cargo fmt --all -- --check` — `--all` formats every package in this workspace; crates pulled in only as non-member **path** dependencies are not workspace members and are not formatted by this command.
 - **Docs:** `cargo doc --workspace --no-deps` (no `--all-features`) with `RUSTDOCFLAGS=-D warnings`, consistent with clippy scope.
 - **`dbc-rs` duplication:** crates from **`platform`** (`dbc-rs`, etc.) are also tested in **`platform/.github/workflows/ci.yml`** when developed there. Runs in **this** repo are for **ecdis-integration** and release hygiene; fixing the same lint in both places is normal when **`platform`** is a path dependency checkout.
 
