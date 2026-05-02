@@ -54,22 +54,18 @@ fn parse_mode() -> Result<Mode, &'static str> {
     let mut args = env::args().skip(1);
     match args.next().as_deref() {
         Some("local") => {
-            let path = args.next().ok_or(
-                "usage: cargo run -p s-164 --example inventory -- local <path-to.zip>",
-            )?;
+            let path = args
+                .next()
+                .ok_or("usage: cargo run -p s-164 --example inventory -- local <path-to.zip>")?;
             Ok(Mode::Local(path))
         }
         Some("download") => {
-            let url = args
-                .next()
-                .unwrap_or_else(|| DEFAULT_TEST_DATA_ZIP_V1_2_0_URL.to_string());
+            let url = args.next().unwrap_or_else(|| DEFAULT_TEST_DATA_ZIP_V1_2_0_URL.to_string());
             Ok(Mode::Download(url))
         }
-        _ => Err(
-            "usage:\n\
+        _ => Err("usage:\n\
                cargo run -p s-164 --example inventory -- local <path-to.zip>\n\
-               cargo run -p s-164 --example inventory -- download [url]",
-        ),
+               cargo run -p s-164 --example inventory -- download [url]"),
     }
 }
 
@@ -90,10 +86,7 @@ fn print_inventory<R: Read + Seek>(
         );
         for ds in catalogue.datasets.iter().take(4) {
             let resolved = resolve_bundle_path(&loc.prefix, &ds.file_uri)?;
-            let prod = ds
-                .product_identifier
-                .as_deref()
-                .unwrap_or("(no productIdentifier)");
+            let prod = ds.product_identifier.as_deref().unwrap_or("(no productIdentifier)");
             println!("    {prod}: {}", ds.file_uri);
             println!("         → {resolved}");
         }

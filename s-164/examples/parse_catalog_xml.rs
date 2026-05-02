@@ -11,9 +11,9 @@ use std::fs;
 use s_164::parse_exchange_catalogue;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = env::args().nth(1).ok_or(
-        "usage: cargo run -p s-164 --example parse_catalog_xml -- <CATALOG.XML>",
-    )?;
+    let path = env::args()
+        .nth(1)
+        .ok_or("usage: cargo run -p s-164 --example parse_catalog_xml -- <CATALOG.XML>")?;
     let xml = fs::read(path)?;
     let catalogue = parse_exchange_catalogue(&xml)?;
     println!("catalogue_identifier: {:?}", catalogue.catalogue_identifier);

@@ -31,7 +31,9 @@ pub fn zip_archive_from_bytes(bytes: Vec<u8>) -> S164Result<ZipArchive<Cursor<Ve
 }
 
 /// Enumerate exchange sets by locating `**/S100_ROOT/CATALOG.XML` entries.
-pub fn discover_exchange_sets<R: Read + Seek>(archive: &mut ZipArchive<R>) -> S164Result<Vec<ExchangeSetLocation>> {
+pub fn discover_exchange_sets<R: Read + Seek>(
+    archive: &mut ZipArchive<R>,
+) -> S164Result<Vec<ExchangeSetLocation>> {
     let mut prefixes = Vec::new();
     for i in 0..archive.len() {
         let file = archive.by_index(i)?;
@@ -61,7 +63,10 @@ fn normalize_zip_prefix(prefix: &str) -> String {
 }
 
 /// Read a zip member into memory after normalizing separators.
-pub fn read_zip_entry<R: Read + Seek>(archive: &mut ZipArchive<R>, path: &str) -> S164Result<Vec<u8>> {
+pub fn read_zip_entry<R: Read + Seek>(
+    archive: &mut ZipArchive<R>,
+    path: &str,
+) -> S164Result<Vec<u8>> {
     let normalized = normalize_slashes(path);
     let mut file = archive
         .by_name(&normalized)

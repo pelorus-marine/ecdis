@@ -43,21 +43,17 @@ fn parse_mode() -> Result<Mode, &'static str> {
     let mut args = env::args().skip(1);
     match args.next().as_deref() {
         Some("local") => {
-            let path = args.next().ok_or(
-                "usage: cargo run -p iho-testdata -- local <path-to-S-164-corpus.zip>",
-            )?;
+            let path = args
+                .next()
+                .ok_or("usage: cargo run -p iho-testdata -- local <path-to-S-164-corpus.zip>")?;
             Ok(Mode::Local(path))
         }
         Some("download") => {
-            let url = args
-                .next()
-                .unwrap_or_else(|| DEFAULT_TEST_DATA_ZIP_V1_2_0_URL.to_string());
+            let url = args.next().unwrap_or_else(|| DEFAULT_TEST_DATA_ZIP_V1_2_0_URL.to_string());
             Ok(Mode::Download(url))
         }
-        _ => Err(
-            "usage:\n\
+        _ => Err("usage:\n\
                cargo run -p iho-testdata -- local <path-to.zip>\n\
-               cargo run -p iho-testdata -- download [url]",
-        ),
+               cargo run -p iho-testdata -- download [url]"),
     }
 }

@@ -98,8 +98,7 @@ mod tests {
 
     #[test]
     fn load_bytes_matches_load_when_fixture_present() {
-        let path =
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../testdata/s101_sample.000");
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../testdata/s101_sample.000");
         if !path.exists() {
             return;
         }

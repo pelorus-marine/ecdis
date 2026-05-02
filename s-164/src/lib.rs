@@ -27,9 +27,7 @@ pub use archive::{
     ExchangeSetLocation, S100_ROOT_CATALOG_XML_SUFFIX,
 };
 pub use catalogue::{parse_exchange_catalogue, DatasetDiscovery, ExchangeCatalogue};
-pub use download::{
-    download_bytes, download_bytes_with_timeout, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL,
-};
+pub use download::{download_bytes, download_bytes_with_timeout, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL};
 pub use error::{S164Error, S164Result};
 
 use std::io::{Read, Seek};
@@ -69,7 +67,10 @@ mod tests {
         let parsed = parse_exchange_catalogue(MINIMAL_CATALOGUE.as_bytes()).unwrap();
         assert_eq!(parsed.catalogue_identifier, "Demo");
         assert_eq!(parsed.datasets.len(), 1);
-        assert_eq!(parsed.datasets[0].file_uri, "file:/S-101/DATASET_FILES/x.000");
+        assert_eq!(
+            parsed.datasets[0].file_uri,
+            "file:/S-101/DATASET_FILES/x.000"
+        );
         assert_eq!(
             parsed.datasets[0].product_identifier.as_deref(),
             Some("S-101")
@@ -108,10 +109,7 @@ mod tests {
             "{sets:?}"
         );
 
-        let loc = sets
-            .iter()
-            .find(|s| s.prefix.contains("DisplayStandard"))
-            .unwrap();
+        let loc = sets.iter().find(|s| s.prefix.contains("DisplayStandard")).unwrap();
         let cat = load_exchange_catalogue(&mut archive, loc).unwrap();
         assert_eq!(cat.catalogue_identifier, "DisplayStandard");
         assert!(!cat.datasets.is_empty());

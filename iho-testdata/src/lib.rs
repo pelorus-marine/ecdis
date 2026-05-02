@@ -6,11 +6,11 @@
 
 use std::io::{Read, Seek};
 
+use s_101::S101Dataset;
 use s_164::{
     discover_exchange_sets, load_exchange_catalogue, read_zip_entry, resolve_bundle_path,
     zip_archive_from_bytes,
 };
-use s_101::S101Dataset;
 use zip::ZipArchive;
 
 /// Aggregate result after scanning every exchange set / catalogue row.
@@ -29,11 +29,7 @@ impl CorpusRunSummary {
     pub fn summary_line(&self) -> String {
         format!(
             "summary: ok={} parse_fail={} io_fail={} skipped_non_s101_rows={} exchange_sets={}",
-            self.ok,
-            self.parse_fail,
-            self.io_fail,
-            self.skipped_non_s101,
-            self.exchange_sets
+            self.ok, self.parse_fail, self.io_fail, self.skipped_non_s101, self.exchange_sets
         )
     }
 }
@@ -41,10 +37,7 @@ impl CorpusRunSummary {
 /// Read a corpus zip from bytes and parse each **S-101** catalogue entry.
 ///
 /// When `verbose`, prints one **stdout** line per successful parse and **`eprintln!`** for failures.
-pub fn run_corpus_zip(
-    bytes: &[u8],
-    verbose: bool,
-) -> Result<CorpusRunSummary, s_164::S164Error> {
+pub fn run_corpus_zip(bytes: &[u8], verbose: bool) -> Result<CorpusRunSummary, s_164::S164Error> {
     let mut archive = zip_archive_from_bytes(bytes.to_vec())?;
     run_corpus_archive(&mut archive, verbose)
 }
