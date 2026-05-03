@@ -14,6 +14,21 @@ cargo run -p ecdis-ui --release -- /path/to/cell.000
 cargo run -p ecdis-ui --release -- /path/to/cell.000 /path/to/feature_catalogue.xml
 ```
 
+### Own-ship demo inputs (env / CLI)
+
+Without overrides, the demo uses the same defaults as before (51°N 2°E, SOG from 3 m/s, HDG 42°, depth 8.5 m; COG unset). Set **`PELORUS_OWNSHIP_*`** environment variables and/or optional flags (after the `.000` / XML arguments) to drive [`OwnShipSnapshot`](../../platform/pelorus-core/src/ownship/snapshot.rs) through to the chart:
+
+| Variable | Optional CLI flag | Meaning |
+|----------|-------------------|---------|
+| `PELORUS_OWNSHIP_LAT` | `--ownship-lat=` | Degrees north |
+| `PELORUS_OWNSHIP_LON` | `--ownship-lon=` | Degrees east |
+| `PELORUS_OWNSHIP_COG` | `--ownship-cog=` | Course over ground (° true); if unset, COG stays empty |
+| `PELORUS_OWNSHIP_SOG_KN` | `--ownship-sog-kn=` | Speed over ground (knots) |
+| `PELORUS_OWNSHIP_HDG` | `--ownship-hdg=` | Heading (° true) |
+| `PELORUS_OWNSHIP_DEPTH_M` | `--ownship-depth-m=` | Depth (m) |
+
+Example: `PELORUS_OWNSHIP_LAT=50.7 PELORUS_OWNSHIP_LON=-1.0 cargo run -p ecdis-ui -- …/cell.000 --ownship-hdg=90`
+
 Use zoom/pan buttons, **drag** on the chart (touch or mouse), or **scroll/wheel** on the chart for zoom. Logs use **`tracing`**; set e.g. `RUST_LOG=ecdis.nav=debug`.
 
 ### Sample ENC (IHO S-64)
@@ -31,7 +46,7 @@ Run Weston (nested session or hardware), ensure `WAYLAND_DISPLAY` is exported in
 
 ## Composition note
 
-The HUD mirrors [`pelorus-ecdis::ChartNavContext`](../pelorus-ecdis/) (**ENC via `Arc<S101Dataset>`**, own-ship snapshot, AIS vector stub): [`OwnShip`](../pelorus-ecdis/src/own_ship.rs) is filled from [`pelorus-core-adapter`](../pelorus-core-adapter/). Chart outlines come from [`CpuOutlinePortrayal`](../ecdis-portrayal/src/cpu_outline.rs) when the cell carries **C2IL** chains; otherwise the demo stub segments are shown.
+The HUD mirrors [`pelorus-ecdis::ChartNavContext`](../pelorus-ecdis/) (**ENC via `Arc<S101Dataset>`**, own-ship snapshot, AIS vector stub): [`OwnShip`](../pelorus-ecdis/src/own_ship.rs) is built from a runtime [`OwnShipSnapshot`](../pelorus-ecdis/src/lib.rs) (env/CLI in this binary; production would use the adapter or a live Core path). Chart outlines come from [`CpuOutlinePortrayal`](../ecdis-portrayal/src/cpu_outline.rs) when the cell carries **C2IL** chains; otherwise the demo stub segments are shown.
 
 ## Licensing
 

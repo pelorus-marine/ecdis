@@ -12,10 +12,8 @@ use ecdis_portrayal::{
     ChartViewport, ChartViewportState, CpuOutlinePortrayal, UI_CHART_VIEWBOX_HEIGHT_PX,
     UI_CHART_VIEWBOX_WIDTH_PX, approx_own_ship_screen_px, demo_stub_segments_px,
 };
-use pelorus_core_adapter::{
-    CoreSampleMapper, OwnShip, UnconfiguredMapper, merge_own_ship_fill_missing,
-};
-use pelorus_ecdis::ChartNavContext;
+use pelorus_core_adapter::{CoreSampleMapper, OwnShip, UnconfiguredMapper};
+use pelorus_ecdis::{ChartNavContext, OwnShipSnapshot};
 use s_101::{
     FcEditionSummary, FeatureCataloguePin, S101Dataset, TARGET_PRODUCT_SPECIFICATION_EDITION,
     parse_fc_edition_summary,
@@ -185,6 +183,89 @@ fn pixel_delta_to_deg(dx: f32, dy: f32, scale_denom: u32) -> (f64, f64) {
     (-f64::from(dx) * k, f64::from(dy) * k)
 }
 
+/// Default position matches [`pelorus-ecdis`](../pelorus-ecdis/) smoke tests and prior demo merge.
+const DEFAULT_OWNSHIP_LAT_DEG: f64 = 51.0;
+const DEFAULT_OWNSHIP_LON_DEG: f64 = 2.0;
+/// Former demo used `sog_mps: 3.0`; snapshot stores knots.
+const DEFAULT_OWNSHIP_SOG_KN: f64 = 3.0 * (3600.0 / 1852.0);
+const DEFAULT_OWNSHIP_HDG_DEG: f64 = 42.0;
+const DEFAULT_OWNSHIP_DEPTH_M: f64 = 8.5;
+
+#[derive(Debug, Default, Clone)]
+struct OwnShipEnvOverrides {
+    lat_deg: Option<f64>,
+    lon_deg: Option<f64>,
+    cog_deg: Option<f64>,
+    sog_kn: Option<f64>,
+    hdg_deg: Option<f64>,
+    depth_m: Option<f64>,
+}
+
+fn parse_env_f64(key: &str) -> Option<f64> {
+    std::env::var(key).ok()?.parse().ok()
+}
+
+/// Optional `--ownship-*=` flags after the ENC (and optional FC) paths; values override env then defaults.
+fn parse_ownship_argv_flags() -> OwnShipEnvOverrides {
+    let mut o = OwnShipEnvOverrides::default();
+    for arg in std::env::args().skip(1) {
+        let Some((k, v)) = arg.split_once('=') else {
+            continue;
+        };
+        let Ok(n) = v.parse::<f64>() else {
+            continue;
+        };
+        match k {
+            "--ownship-lat" => o.lat_deg = Some(n),
+            "--ownship-lon" => o.lon_deg = Some(n),
+            "--ownship-cog" => o.cog_deg = Some(n),
+            "--ownship-sog-kn" => o.sog_kn = Some(n),
+            "--ownship-hdg" => o.hdg_deg = Some(n),
+            "--ownship-depth-m" => o.depth_m = Some(n),
+            _ => {}
+        }
+    }
+    o
+}
+
+fn build_own_ship_snapshot(cli: &OwnShipEnvOverrides) -> OwnShipSnapshot {
+    let lat = cli
+        .lat_deg
+        .or_else(|| parse_env_f64("PELORUS_OWNSHIP_LAT"))
+        .unwrap_or(DEFAULT_OWNSHIP_LAT_DEG);
+    let lon = cli
+        .lon_deg
+        .or_else(|| parse_env_f64("PELORUS_OWNSHIP_LON"))
+        .unwrap_or(DEFAULT_OWNSHIP_LON_DEG);
+    let sog_kn = cli
+        .sog_kn
+        .or_else(|| parse_env_f64("PELORUS_OWNSHIP_SOG_KN"))
+        .unwrap_or(DEFAULT_OWNSHIP_SOG_KN);
+    let hdg = cli
+        .hdg_deg
+        .or_else(|| parse_env_f64("PELORUS_OWNSHIP_HDG"))
+        .unwrap_or(DEFAULT_OWNSHIP_HDG_DEG);
+    let depth_m = cli
+        .depth_m
+        .or_else(|| parse_env_f64("PELORUS_OWNSHIP_DEPTH_M"))
+        .unwrap_or(DEFAULT_OWNSHIP_DEPTH_M);
+
+    let cog_from_cli_or_env = cli.cog_deg.or_else(|| parse_env_f64("PELORUS_OWNSHIP_COG"));
+
+    let mut snap = match cog_from_cli_or_env {
+        Some(cog) => OwnShipSnapshot::with_navigation(lat, lon, cog, sog_kn, hdg),
+        None => OwnShipSnapshot {
+            lat_deg: Some(lat),
+            lon_deg: Some(lon),
+            sog_kn: Some(sog_kn),
+            heading_true_deg: Some(hdg),
+            ..OwnShipSnapshot::default()
+        },
+    };
+    snap.depth_m = Some(depth_m);
+    snap
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ = tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
@@ -209,15 +290,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mapper = UnconfiguredMapper;
     let _ = CoreSampleMapper::map_own_ship(&mapper, &[]);
 
-    let own_ship = merge_own_ship_fill_missing(
-        OwnShip::with_position(51.0, 2.0),
-        OwnShip {
-            sog_mps: Some(3.0),
-            heading_true_deg: Some(42.0),
-            depth_m: Some(8.5),
-            ..Default::default()
-        },
-    );
+    let own_ship_flags = parse_ownship_argv_flags();
+    let own_ship = OwnShip::from(build_own_ship_snapshot(&own_ship_flags));
 
     let ctx = Arc::new(ChartNavContext::new(chart).with_own_ship(own_ship));
 
