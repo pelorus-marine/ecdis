@@ -1,12 +1,45 @@
-# ECDIS workspace — architecture index
+# Pelorus ECDIS — architecture record
 
-This file is a **non-duplicative index**: each crate owns its own design narrative in **`ARCHITECTURE.md`** beneath its directory. Do not copy those details here.
+**Last Updated:** May 2, 2026  
+**Status:** Living (non-normative)
 
-## Role in the Pelorus ecosystem
+## 1. Project
 
-This repository hosts Rust libraries for **IHO S-100-family** geospatial data and the **ISO 8211** interchange layer used by ENC and related products. It is intended as a chart-grade component in the wider [Pelorus open marine data network](https://sevenseas.io/pelorus), alongside the architecture record in [pelorus-marine/specifications](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md) (Stream-layer examples explicitly mention ECDIS connectivity). This workspace does **not** implement Pelorus Core CAN FD or Stream transports; it focuses on **parsing, validation, and type-safe access** to hydrographic exchange data suitable for an **ECDIS-class** or **chart-plotter** display chain. The **`pelorus-ecdis`** crate defines **integration-shaped** types so application services can join chart data with Core-derived telemetry without hard-coding bus protocols here.
+### Mission
 
-## Intended layering
+**Chart-grade** Rust libraries for **IHO S-100-family** geospatial products and the **ISO 8211** interchange layer used by ENC and related hydrographic exchange. The workspace supplies **parsing, validation, and type-safe access** to data suitable for an **ECDIS-class** or **chart-plotter** display chain, with **integration-shaped** types so bridge services can join chart products with Pelorus-derived telemetry **without** embedding bus protocols in every crate.
+
+### Relationship to Pelorus specifications
+
+Full programme mission, [**Legacy Marine Data Ecosystem (LMDE)**](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md#lmde), and subsystem definitions (**Core**, **Stream**, **State**) live in the [Specifications architecture record](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md). This repository **does not** implement Pelorus **Core** (CAN FD) or **Stream** transports; it aligns with the ecosystem where **Stream** examples explicitly mention **ECDIS connectivity**—here as **data and portrayal**, not as a replacement for nautical truth on the Core fieldbus.
+
+The **`pelorus-ecdis`** crate holds **integration-shaped** boundaries toward **`pelorus-core`** via **`pelorus-core-adapter`** (mapper traits and timestamps—**no sockets** in-tree).
+
+### Presence
+
+- [Pelorus project site](https://sevenseas.io/pelorus) — Landing page for the Pelorus open marine data network.
+- [Specifications repository](https://github.com/pelorus-marine/specifications) — Programme-wide architecture and DCID / Stream drafts.
+- [ECDIS workspace repository](https://github.com/pelorus-marine/ecdis) — Source of truth for this document set; issues and chart-stack changes live here.
+- [Seven Seas community](https://sevenseas.io/) — Project-facing brand and wider community entry point.
+
+---
+
+## 2. Problems this workspace targets
+
+Weaknesses in **ENC / S-100 toolchain friction** and **chart-application integration** that this codebase addresses:
+
+- **Opaque interchange stacks**: ISO 8211 and product XML/binary bundles are hard to navigate without typed, testable Rust boundaries—this workspace splits **structure** (`iso8211`), **framework** (`s-100`), and **product crates** (`s-101`, …) so callers progress deliberately.
+- **Conformance vs exploration**: Published **S-164** test corpora and vendor bundles need **routing** separate from **semantic decode**—[`s-164`](s-164/) packages discovery; **product crates** own interchange semantics (see [Conformance corpora vs product decode](#conformance-corpora-vs-product-decode) below).
+- **Bridge integration gaps**: Operators want **chart context** and **own-ship / AIS** snapshots aligned with Pelorus **DCID**-style contracts—**`pelorus-ecdis`** and **`pelorus-core-adapter`** define those seams **without** dragging Core or Stream sockets into every chart crate.
+- **Presentation portability**: Display stacks differ (CLI demo, Slint IVI shell)—**`ecdis-portrayal`** / **`ecdis-behaviours`** isolate portrayal and behaviour stubs from interchange decoding.
+
+**Pelorus ECDIS** does **not** claim **IMO type approval** or bit-identical behaviour vs any vendor ECDIS kernel—those remain matters for integrators, classification societies, and normative IHO/IMO texts.
+
+---
+
+## 3. Subsystems
+
+### Intended layering
 
 Data flows **up** from interchange bytes toward application types:
 
@@ -24,13 +57,13 @@ published test zip  →  `s-164` (inventory / catalogue slice only)  →  caller
 
 Product crates may depend on `iso8211` and `s-100` as the workspace matures; dependency edges are documented per crate.
 
-## Conformance test corpora vs product decode
+### Non-duplicative detail
 
-[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in binaries, tests, applications, or **[`iho-testdata`](iho-testdata/)** (example orchestration binary). Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
+Each crate may carry its own **`ARCHITECTURE.md`** beneath its directory for module layout, parsing strategy, and known gaps. **This file** lists ecosystem position, layers, and crate index—not low-level module tables.
 
-## Crates
+### Crates
 
-Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable ([IHO product list](https://iho.int/en/s-100-based-product-specifications)). Each member has **`README.md`** (purpose + licensing) and an **`ARCHITECTURE.md`** for `s-*` and core tooling.
+Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable ([IHO product list](https://iho.int/en/s-100-based-product-specifications)). Each member has **`README.md`** (purpose + licensing) and an **`ARCHITECTURE.md`** for `s-*` and core tooling where present.
 
 | Directory | IHO / ISO | Role |
 |-----------|-----------|------|
@@ -68,7 +101,23 @@ Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable (
 
 Exact **members**: [`Cargo.toml`](Cargo.toml) `workspace.members` (matches table above).
 
-**Scope note:** track work in [GitHub Issues](https://github.com/pelorus-marine/ecdis/issues); IHO/IMO texts are normative for certification.
+**Scope note:** track work in [GitHub Issues](https://github.com/pelorus-marine/ecdis/issues); **IHO** / **IMO** normative texts govern certification—this repository is implementation and integration scaffolding.
+
+### Conformance corpora vs product decode
+
+[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in binaries, tests, applications, or **[`iho-testdata`](iho-testdata/)** (example orchestration binary). Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
+
+---
+
+## 4. Trademarks and third-party names
+
+Pelorus ECDIS is an independent open-source workspace. **This is not legal advice**; consult counsel before shipping product packaging, marketing, or certifications that cite hydrographic or classification regimes.
+
+**IHO**, **S-100**, **ENC**, product numbers (**S-101**, **S-164**, …), and related hydrographic programme names are cited **nominatively** to identify standards and test artefacts; **rights belong to the International Hydrographic Organization and its partners**, not this repository.
+
+Commercial marine networks and programmes discussed in the [Specifications architecture record](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md#4-trademarks-and-third-party-names) (**NMEA**, **OneNet**, OEM buses, etc.) remain **third-party** marks there—this workspace does **not** imply wire-level compatibility with any incumbent ECDIS product line unless a normative conformance document and tests establish it.
+
+---
 
 ## Repository metadata
 
@@ -77,4 +126,4 @@ Exact **members**: [`Cargo.toml`](Cargo.toml) `workspace.members` (matches table
 ## Where not to add design detail
 
 - **Per-crate** `ARCHITECTURE.md` files are the source of truth for module layout, parsing strategy, and known gaps.
-- **This file** should only list crates, relationships, and ecosystem positioning—**not** module tables or data-flow diagrams for individual libraries.
+- **This file** should only list crates, relationships, and ecosystem positioning—**not** module tables or data-flow diagrams duplicated from individual libraries.
