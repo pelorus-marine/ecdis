@@ -2,7 +2,7 @@
 name = "s-101"
 version = "0.0.1"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.90.0"
 authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
 description = "IHO S-101 Electronic Navigational Chart (ENC) — decode from ISO 8211 (initial slice)."
 readme = "README.md"

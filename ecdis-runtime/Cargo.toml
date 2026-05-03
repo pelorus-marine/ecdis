@@ -2,7 +2,7 @@
 name = "ecdis-runtime"
 version = "0.0.1"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.90.0"
 authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
 description = "Composition-root demo: ENC load + ChartNavContext + portrayal/behaviour stubs."
 readme = "README.md"

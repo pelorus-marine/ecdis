@@ -34,7 +34,7 @@ Workspace **`release`** profile uses **`lto = "thin"`**; **`ecdis-ui`** addition
 
 Canonical workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-- **Toolchain:** Rust **`1.88.0`** (via `dtolnay/rust-toolchain@master` + `rust-toolchain.toml`), aligned with **`platform`** / **`specifications`** for reproducible CI and local `rustfmt` / `clippy`.
+- **Toolchain:** Rust **`1.90.0`** (via `dtolnay/rust-toolchain@master` + `rust-toolchain.toml`), aligned with **`platform`** / **`specifications`** for reproducible CI and local `rustfmt` / `clippy`.
 - **Clippy:** `cargo clippy --workspace --all-targets -- -D warnings` **without `--all-features`** — feature combinations are exercised via normal `cargo test` and crate-local configs; full `--all-features` across the workspace is intentionally avoided here to reduce redundant / conflicting feature graphs.
 - **Rustfmt:** `cargo fmt --all -- --check` — `--all` formats every package in this workspace; crates pulled in only as non-member **path** dependencies are not workspace members and are not formatted by this command.
 - **Docs:** `cargo doc --workspace --no-deps` (no `--all-features`) with `RUSTDOCFLAGS=-D warnings`, consistent with clippy scope.

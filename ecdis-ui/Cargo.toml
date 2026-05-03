@@ -2,7 +2,7 @@
 name = "ecdis-ui"
 version = "0.0.1"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.90.0"
 authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
 description = "Slint Wayland UI shell for ENC load + ChartNavContext (IVI-style demo)."
 readme = "README.md"
