@@ -115,7 +115,7 @@ Pelorus ECDIS is an independent open-source workspace. **This is not legal advic
 
 **IHO**, **S-100**, **ENC**, product numbers (**S-101**, **S-164**, …), and related hydrographic programme names are cited **nominatively** to identify standards and test artefacts; **rights belong to the International Hydrographic Organization and its partners**, not this repository.
 
-Commercial marine networks and programmes discussed in the [Specifications architecture record](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md#4-trademarks-and-third-party-names) (**NMEA**, **OneNet**, OEM buses, etc.) remain **third-party** marks there—this workspace does **not** imply wire-level compatibility with any incumbent ECDIS product line unless a normative conformance document and tests establish it.
+Commercial marine networks and programmes discussed in the [Specifications architecture record](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md#5-trademarks-and-third-party-names) (**NMEA**, **OneNet**, OEM buses, etc.) remain **third-party** marks there—this workspace does **not** imply wire-level compatibility with any incumbent ECDIS product line unless a normative conformance document and tests establish it.
 
 ---
 
