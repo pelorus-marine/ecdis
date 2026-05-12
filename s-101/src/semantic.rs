@@ -1,7 +1,8 @@
 //! Minimal **semantic inventory** over ISO 8211 data records — groundwork for FC-driven decode.
 //!
 //! S-101 features are carried in data records that include an **`FRID`** directory field.
-//! Interpreting FRID / geometry / attributes per the feature catalogue is future work.
+//! Full FC-backed decode lives in [`crate::graph`] and [`crate::record`]; this module keeps
+//! cheap iterators for stage-1 portrayal and dashboards.
 
 use crate::S101Dataset;
 use crate::decode::record_field_payload;

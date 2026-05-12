@@ -11,9 +11,7 @@ mod cpu_outline;
 
 use std::fmt;
 
-pub use catalogue_backed::{
-    CatalogueBackedPortrayal, FeaturePortrayalDraft, PortrayalSetupError,
-};
+pub use catalogue_backed::{CatalogueBackedPortrayal, FeaturePortrayalDraft, PortrayalSetupError};
 pub use chart_viewport::{
     ChartViewport, ChartViewportState, UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX,
     approx_own_ship_screen_px, demo_stub_segments_px,

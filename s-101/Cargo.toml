@@ -13,6 +13,7 @@ repository = "https://github.com/pelorus-marine/ecdis"
 
 [dependencies]
 iso8211 = { version = "0.1.5", path = "../iso8211" }
+s-100 = { version = "0.0.1", path = "../s-100" }
 roxmltree = "0.20"
 thiserror = "2.0"
 zip = { version = "2.2", default-features = false, features = ["deflate"] }

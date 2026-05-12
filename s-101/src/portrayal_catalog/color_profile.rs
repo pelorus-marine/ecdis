@@ -24,8 +24,7 @@ impl ColorProfile {
 
 /// Parse a `colorProfile.xml` body.
 pub fn parse_color_profile_xml(xml: &[u8]) -> Result<ColorProfile, PortrayalCatalogueError> {
-    let text =
-        decode_xml_string(xml).map_err(|_| PortrayalCatalogueError::ColorProfileNotUtf8)?;
+    let text = decode_xml_string(xml).map_err(|_| PortrayalCatalogueError::ColorProfileNotUtf8)?;
     let doc = Document::parse(&text).map_err(PortrayalCatalogueError::ColorProfileXml)?;
     let root = doc
         .descendants()

@@ -21,8 +21,7 @@ const S101_PRODUCT_ID: &str = "S-101";
 fn drives_pipeline_with_real_portrayal_catalogue() {
     let zip_path = std::env::var_os("IHO_TESTDATA_ZIP")
         .expect("set IHO_TESTDATA_ZIP to the S-164 corpus zip path");
-    let mut corpus =
-        Corpus::open(&zip_path).unwrap_or_else(|e| panic!("open {zip_path:?}: {e}"));
+    let mut corpus = Corpus::open(&zip_path).unwrap_or_else(|e| panic!("open {zip_path:?}: {e}"));
     drive_pipeline(&mut corpus);
 }
 
@@ -72,12 +71,8 @@ fn drive_pipeline(corpus: &mut Corpus) {
     // Use the first loaded catalogue as the pipeline backing.
     let pipeline_catalogue = loaded[0].1.clone();
     let total_rules = pipeline_catalogue.manifest.rules.len();
-    let subtemplate_rules = pipeline_catalogue
-        .manifest
-        .rules
-        .iter()
-        .filter(|r| r.is_sub_template())
-        .count();
+    let subtemplate_rules =
+        pipeline_catalogue.manifest.rules.iter().filter(|r| r.is_sub_template()).count();
     let mut pipeline = CatalogueBackedPortrayal::new(pipeline_catalogue)
         .expect("catalogue should have a TopLevelTemplate rule and a Day palette");
     pipeline.set_display_scale(50_000).unwrap();
@@ -94,10 +89,7 @@ fn drive_pipeline(corpus: &mut Corpus) {
         .filter(|d| !d.classification.expects_iso8211_parse_failure())
         .cloned()
         .collect();
-    assert!(
-        !datasets.is_empty(),
-        "no positive S-101 datasets in corpus"
-    );
+    assert!(!datasets.is_empty(), "no positive S-101 datasets in corpus");
 
     let mut total_features_drafted = 0usize;
     for entry in &datasets {
@@ -144,17 +136,8 @@ fn print_catalogue_summary(entry: &CatalogueEntry, catalogue: &PortrayalCatalogu
         .as_ref()
         .map(|cp| cp.palettes.iter().map(|p| p.name.as_str()).collect())
         .unwrap_or_default();
-    let color_tokens = catalogue
-        .color_profile
-        .as_ref()
-        .map(|cp| cp.tokens.len())
-        .unwrap_or(0);
-    let top_level = m
-        .rules
-        .iter()
-        .find(|r| r.is_top_level())
-        .map(|r| r.id.as_str())
-        .unwrap_or("?");
+    let color_tokens = catalogue.color_profile.as_ref().map(|cp| cp.tokens.len()).unwrap_or(0);
+    let top_level = m.rules.iter().find(|r| r.is_top_level()).map(|r| r.id.as_str()).unwrap_or("?");
     eprintln!(
         "  [bundle={}] product={} v{} symbols={} line_styles={} area_fills={} rules={} (top={}) color_tokens={} palettes={:?}  ← {}",
         catalogue.bundle_root,

@@ -7,9 +7,7 @@ use zip::ZipArchive;
 use super::color_palette::ColorPalette;
 use super::color_profile::{ColorProfile, parse_color_profile_xml};
 use super::error::PortrayalCatalogueError;
-use super::portrayal_catalogue_manifest::{
-    PortrayalCatalogueManifest, parse_manifest_xml,
-};
+use super::portrayal_catalogue_manifest::{PortrayalCatalogueManifest, parse_manifest_xml};
 
 const MANIFEST_PATH: &str = "PortrayalCatalog/portrayal_catalogue.xml";
 const COLOR_PROFILE_PATH: &str = "PortrayalCatalog/ColorProfiles/colorProfile.xml";
@@ -38,13 +36,11 @@ impl PortrayalCatalogue {
             read_zip_entry(&mut archive, &format!("{bundle_root}/{MANIFEST_PATH}"))?;
         let manifest = parse_manifest_xml(&manifest_bytes)?;
 
-        let color_profile = match read_zip_entry(
-            &mut archive,
-            &format!("{bundle_root}/{COLOR_PROFILE_PATH}"),
-        ) {
-            Ok(cp_bytes) => parse_color_profile_xml(&cp_bytes).ok(),
-            Err(_) => None,
-        };
+        let color_profile =
+            match read_zip_entry(&mut archive, &format!("{bundle_root}/{COLOR_PROFILE_PATH}")) {
+                Ok(cp_bytes) => parse_color_profile_xml(&cp_bytes).ok(),
+                Err(_) => None,
+            };
 
         Ok(Self {
             bundle_root,

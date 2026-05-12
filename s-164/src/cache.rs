@@ -30,10 +30,7 @@ pub fn cache_filename_from_url(url: &str) -> S164Result<String> {
         .find('/')
         .map(|p| p + 1)
         .ok_or_else(|| S164Error::CacheFilenameFromUrl(url.to_string()))?;
-    let path = after_scheme[path_start..]
-        .split(['?', '#'])
-        .next()
-        .unwrap_or("");
+    let path = after_scheme[path_start..].split(['?', '#']).next().unwrap_or("");
     let last = path
         .rsplit('/')
         .find(|seg| !seg.is_empty())
@@ -51,9 +48,7 @@ pub fn cache_path_for_url(url: &str) -> S164Result<PathBuf> {
 
 /// Atomically write `bytes` to `final_path` via a temp sibling + rename.
 pub fn write_atomic(final_path: &Path, bytes: &[u8]) -> S164Result<()> {
-    let parent = final_path
-        .parent()
-        .ok_or(S164Error::CacheDirUnavailable)?;
+    let parent = final_path.parent().ok_or(S164Error::CacheDirUnavailable)?;
     std::fs::create_dir_all(parent)?;
     let mut tmp = final_path.as_os_str().to_owned();
     tmp.push(".partial");

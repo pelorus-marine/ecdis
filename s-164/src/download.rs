@@ -73,10 +73,10 @@ fn try_read_valid_cache(
         return Ok(None);
     }
     let bytes = std::fs::read(cache_path)?;
-    if let Some(expected) = expected_sha256 {
-        if verify_sha256(&bytes, expected, &cache_path.display().to_string()).is_err() {
-            return Ok(None);
-        }
+    if let Some(expected) = expected_sha256
+        && verify_sha256(&bytes, expected, &cache_path.display().to_string()).is_err()
+    {
+        return Ok(None);
     }
     Ok(Some(bytes))
 }

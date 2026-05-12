@@ -20,8 +20,7 @@ const S101_PRODUCT_ID: &str = "S-101";
 fn parses_every_s101_dataset_in_corpus() {
     let zip_path = std::env::var_os("IHO_TESTDATA_ZIP")
         .expect("set IHO_TESTDATA_ZIP to the S-164 corpus zip path");
-    let mut corpus = Corpus::open(&zip_path)
-        .unwrap_or_else(|e| panic!("open {:?}: {e}", zip_path));
+    let mut corpus = Corpus::open(&zip_path).unwrap_or_else(|e| panic!("open {:?}: {e}", zip_path));
     assert_s101_corpus_parses(&mut corpus);
 }
 
@@ -33,14 +32,9 @@ fn fetches_and_parses_default_corpus() {
 }
 
 fn assert_s101_corpus_parses(corpus: &mut Corpus) {
-    let entries: Vec<DatasetEntry> = corpus
-        .datasets_for_product(S101_PRODUCT_ID)
-        .cloned()
-        .collect();
-    assert!(
-        !entries.is_empty(),
-        "corpus advertises no S-101 datasets"
-    );
+    let entries: Vec<DatasetEntry> =
+        corpus.datasets_for_product(S101_PRODUCT_ID).cloned().collect();
+    assert!(!entries.is_empty(), "corpus advertises no S-101 datasets");
 
     let mut positives_ok = 0usize;
     let mut negatives_ok = 0usize;

@@ -31,9 +31,7 @@ pub use color_token_decl::ColorTokenDecl;
 pub use error::PortrayalCatalogueError;
 pub use named_asset::NamedAsset;
 pub use portrayal_catalogue::PortrayalCatalogue;
-pub use portrayal_catalogue_manifest::{
-    PortrayalCatalogueManifest, parse_manifest_xml,
-};
+pub use portrayal_catalogue_manifest::{PortrayalCatalogueManifest, parse_manifest_xml};
 pub use rule_asset::RuleAsset;
 
 #[cfg(test)]
@@ -91,7 +89,10 @@ mod tests {
         let m = parse_manifest_xml(MINIMAL_MANIFEST.as_bytes()).unwrap();
         assert_eq!(m.product_id, "S-101");
         assert_eq!(m.version, "1.0.2");
-        assert_eq!(m.alert_catalog_file.as_deref(), Some("AlertCatalog-S101.xml"));
+        assert_eq!(
+            m.alert_catalog_file.as_deref(),
+            Some("AlertCatalog-S101.xml")
+        );
         assert_eq!(m.color_profile_files, vec!["colorProfile.xml"]);
         assert_eq!(m.symbols.len(), 2);
         assert_eq!(m.symbols[0].id, "ACHARE02");

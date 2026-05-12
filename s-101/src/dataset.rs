@@ -55,6 +55,17 @@ impl S101Dataset {
     pub fn first_record_dsid_payload(&self) -> Option<&[u8]> {
         record_field_payload(self.inner.data_records().first()?, "DSID")
     }
+
+    /// Classify every ISO 8211 data record into a typed [`crate::record::Record`].
+    #[must_use]
+    pub fn typed_records(&self) -> Vec<crate::record::Record> {
+        self.inner
+            .data_records()
+            .iter()
+            .enumerate()
+            .map(|(i, r)| crate::record::classify_record(i, r))
+            .collect()
+    }
 }
 
 fn validate_s101_structure(ddf: &DataDescriptiveFile) -> Result<(), S101Error> {

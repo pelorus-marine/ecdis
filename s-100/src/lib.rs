@@ -1,24 +1,36 @@
-//! IHO **S-100** Universal Hydrographic Data Model — Rust representation (stub).
+//! IHO **S-100** Universal Hydrographic Data Model — Rust representation.
 //!
-//! Intended role: shared constructs used across **S-100 product specifications** (metadata,
-//! general feature model alignment, common enumerations) so product crates (`s-101`, `s-102`, …)
-//! do not duplicate framework-level types.
+//! Shared **geometry** (WGS84) and **identifiers** used by product crates (`s-101`, …) and
+//! presentation layers ([`ecdis_portrayal`](https://crates.io/crates/ecdis-portrayal)).
 //!
 //! # Status
 //!
-//! **Stub:** no normative schema binding yet. See [ARCHITECTURE.md](https://github.com/pelorus-marine/ecdis/blob/main/s-100/ARCHITECTURE.md) in the repository for scope.
+//! Framework modelling is still incremental; see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 #![forbid(unsafe_code)]
 
-/// Marker type until S-100 framework types are modeled from the IHO edition in use.
+pub mod feature_id;
+pub mod geometry;
+
+pub use feature_id::FeatureObjectId;
+pub use geometry::{Curve2D, Geometry, MultiPoint2D, Point2D, Surface2D};
+
+/// Marker type retained for early workspace wiring; prefer concrete types in this crate.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct FrameworkStub;
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
-    fn stub() {
+    fn geometry_point_not_empty() {
+        let g = Geometry::Point(Point2D::new(1.0, 2.0));
+        assert!(!g.is_empty());
+    }
+
+    #[test]
+    fn framework_stub() {
         let _ = FrameworkStub;
     }
 }

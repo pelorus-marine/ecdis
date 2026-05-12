@@ -11,6 +11,7 @@ repository = "https://github.com/pelorus-marine/ecdis"
 publish = false
 
 [dependencies]
+s-100 = { path = "../s-100" }
 s-101 = { path = "../s-101" }
 
 [dev-dependencies]

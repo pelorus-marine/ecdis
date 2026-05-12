@@ -8,13 +8,16 @@
 
 **S-100** is the IHO’s modern **common data framework** (aligned with ISO 191xx concepts) for digital hydrographic and nautical products. Individual **product specifications** (**S-101**, **S-102**, …) build on **S-100**.
 
-This crate is a **placeholder (v0.0.1)** to reserve the hyphenated name **`s-100`** on [crates.io](https://crates.io/crates/s-100) and to grow **shared Rust types** (metadata, common identifiers, catalogue hooks) so product crates do not duplicate framework-level concepts.
+This crate provides **shared Rust types** used across product crates:
 
-Transport encoding of datasets typically uses **ISO 8211** — see the [`iso8211`](https://crates.io/crates/iso8211) crate.
+- **Geometry** in WGS84 degrees: `Point2D`, `MultiPoint2D`, `Curve2D`, `Surface2D`, `Geometry`.
+- **Identifiers:** `FeatureObjectId` (FOID triple).
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for boundaries and module layout.
 
 ## Status
 
-**Stub:** no schema binding yet. See [ARCHITECTURE.md](ARCHITECTURE.md).
+**Incremental:** geometry + FOID are implemented; broader UHDM modelling remains optional. The `FrameworkStub` type in `src/lib.rs` is retained for early workspace wiring.
 
 ## License
 

@@ -10,7 +10,8 @@
 //!
 //! [`reset_for_chart`]: PortrayalPipeline::reset_for_chart
 
-use s_101::{PortrayalCatalogue, RuleAsset, S101Dataset};
+use s_100::FeatureObjectId;
+use s_101::{FeatureGraph, PortrayalCatalogue, RuleAsset, S101Dataset};
 
 use crate::{PortrayError, PortrayalPipeline};
 
@@ -23,18 +24,26 @@ pub struct CatalogueBackedPortrayal {
     palette_name: String,
     /// Display scale denominator; informational for stage 1.
     scale_denominator: Option<u32>,
-    /// Drafts produced by the most recent [`reset_for_chart`](Self::reset_for_chart).
+    /// Drafts produced by the most recent [`reset_for_chart`](Self::reset_for_chart) or
+    /// [`ingest_feature_graph`](Self::ingest_feature_graph).
     last_drafts: Vec<FeaturePortrayalDraft>,
 }
 
 /// Stage-1 per-feature draft: rule reference without resolved symbology.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FeaturePortrayalDraft {
-    /// ISO 8211 record index inside the dataset (`FRID`-bearing rows only).
+    /// ISO 8211 data-record index when this draft was produced by
+    /// [`reset_for_chart`](PortrayalPipeline::reset_for_chart); sequential position
+    /// (`0..N-1`) when produced by [`ingest_feature_graph`](CatalogueBackedPortrayal::ingest_feature_graph).
     pub record_index: usize,
     /// `id` of the [`RuleAsset`] this feature dispatches through (currently always
     /// the top-level template — class-specific dispatch needs Lua to evaluate).
     pub rule_id: String,
+    /// Present when the draft was built from a [`FeatureGraph`] (`ingest_feature_graph`).
+    pub foid: Option<FeatureObjectId>,
+    /// Resolved feature-class **alias** from the feature catalogue, or **code** if no alias.
+    /// Set only for graph-driven drafts; [`None`] for raw [`reset_for_chart`] output.
+    pub feature_class_alias: Option<String>,
 }
 
 /// Errors produced when constructing or driving a [`CatalogueBackedPortrayal`].
@@ -102,7 +111,8 @@ impl CatalogueBackedPortrayal {
         self.scale_denominator
     }
 
-    /// Drafts produced by the most recent [`reset_for_chart`](Self::reset_for_chart) call.
+    /// Drafts produced by the most recent [`reset_for_chart`](Self::reset_for_chart) or
+    /// [`ingest_feature_graph`](Self::ingest_feature_graph) call.
     #[must_use]
     pub fn drafts(&self) -> &[FeaturePortrayalDraft] {
         &self.last_drafts
@@ -113,11 +123,34 @@ impl CatalogueBackedPortrayal {
     /// subroutines (e.g. `Default`, `S100Scripting`); callers cross-reference the feature
     /// catalogue when they need a precise mapping.
     pub fn sub_template_rules(&self) -> impl Iterator<Item = &RuleAsset> {
-        self.catalogue
-            .manifest
-            .rules
+        self.catalogue.manifest.rules.iter().filter(|r| r.is_sub_template())
+    }
+
+    /// Replace [`Self::last_drafts`] using resolved features from `graph` (one draft per
+    /// feature). Still references the catalogue **top-level** rule only — same stage-1
+    /// contract as [`reset_for_chart`](PortrayalPipeline::reset_for_chart).
+    pub fn ingest_feature_graph(&mut self, graph: &FeatureGraph<'_>) {
+        let Some(top) = top_level_rule(&self.catalogue) else {
+            self.last_drafts.clear();
+            return;
+        };
+        let rule_id = top.id.clone();
+        self.last_drafts = graph
+            .features
             .iter()
-            .filter(|r| r.is_sub_template())
+            .enumerate()
+            .map(|(i, f)| {
+                let feature_class_alias = f.class.map(|ft| {
+                    ft.alias.clone().filter(|a| !a.is_empty()).unwrap_or_else(|| ft.code.clone())
+                });
+                FeaturePortrayalDraft {
+                    record_index: i,
+                    rule_id: rule_id.clone(),
+                    foid: Some(f.foid),
+                    feature_class_alias,
+                }
+            })
+            .collect();
     }
 }
 
@@ -134,6 +167,8 @@ impl PortrayalPipeline for CatalogueBackedPortrayal {
             .map(|r| FeaturePortrayalDraft {
                 record_index: r.record_index,
                 rule_id: rule_id.clone(),
+                foid: None,
+                feature_class_alias: None,
             })
             .collect();
         Ok(())
@@ -146,19 +181,13 @@ impl PortrayalPipeline for CatalogueBackedPortrayal {
 }
 
 fn top_level_rule(catalogue: &PortrayalCatalogue) -> Option<&RuleAsset> {
-    catalogue
-        .manifest
-        .rules
-        .iter()
-        .find(|r| r.is_top_level())
+    catalogue.manifest.rules.iter().find(|r| r.is_top_level())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use s_101::{
-        ColorPalette, ColorProfile, NamedAsset, PortrayalCatalogueManifest, RuleAsset,
-    };
+    use s_101::{ColorPalette, ColorProfile, NamedAsset, PortrayalCatalogueManifest, RuleAsset};
 
     fn fixture_catalogue() -> PortrayalCatalogue {
         PortrayalCatalogue {
@@ -207,8 +236,8 @@ mod tests {
 
     #[test]
     fn rejects_unknown_palette_when_profile_present() {
-        let err = CatalogueBackedPortrayal::with_palette(fixture_catalogue(), "Twilight")
-            .unwrap_err();
+        let err =
+            CatalogueBackedPortrayal::with_palette(fixture_catalogue(), "Twilight").unwrap_err();
         assert_eq!(err, PortrayalSetupError::UnknownPalette("Twilight".into()));
     }
 

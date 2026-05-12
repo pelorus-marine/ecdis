@@ -1,6 +1,6 @@
 # Pelorus ECDIS — architecture record
 
-**Last Updated:** May 2, 2026  
+**Last Updated:** May 12, 2026  
 **Status:** Living (non-normative)
 
 ## 1. Project
@@ -79,8 +79,8 @@ Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable (
 | [`s-97/`](s-97/) | **S-97** | Guidelines for S-100 product specifications (stub). |
 | [`s-98/`](s-98/) | **S-98** | Data product interoperability (stub). |
 | [`s-99/`](s-99/) | **S-99** | GI registry operational procedures (stub). |
-| [`s-100/`](s-100/) | **S-100** | Universal Hydrographic Data Model framework (stub). |
-| [`s-101/`](s-101/) | **S-101** | ENC — ISO 8211 load + FRID inventory / edition pins (FC XML decode TBD). |
+| [`s-100/`](s-100/) | **S-100** | Shared **geometry** (WGS84) + **FeatureObjectId**; used by `s-101` and `ecdis-portrayal`. |
+| [`s-101/`](s-101/) | **S-101** | ENC — ISO 8211 load, typed records, feature-catalogue XML subset, **feature graph** (FC + geometry). |
 | [`s-102/`](s-102/) | **S-102** | Bathymetric Surface (S-100 product; stub). |
 | [`s-103/`](s-103/) | **S-103** | Sub-surface Navigation (stub). |
 | [`s-104/`](s-104/) | **S-104** | Water Level Information for Surface Navigation (stub). |

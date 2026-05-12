@@ -16,9 +16,7 @@ pub(crate) fn child_text(node: roxmltree::Node<'_, '_>, local: &str) -> Option<S
 pub(crate) fn decode_xml_string(xml: &[u8]) -> Result<String, std::str::Utf8Error> {
     let declared_iso_8859 = declares_iso_8859_1(xml);
 
-    if !declared_iso_8859
-        && let Ok(s) = std::str::from_utf8(xml)
-    {
+    if !declared_iso_8859 && let Ok(s) = std::str::from_utf8(xml) {
         return Ok(s.to_string());
     }
 

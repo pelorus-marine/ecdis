@@ -198,9 +198,7 @@ impl Corpus {
     /// Iterator over catalogue entries that **look like portrayal catalogues**
     /// (filename contains `Portrayal`).
     pub fn portrayal_catalogues(&self) -> impl Iterator<Item = &CatalogueEntry> + '_ {
-        self.catalogues
-            .iter()
-            .filter(|c| c.looks_like_portrayal_catalogue())
+        self.catalogues.iter().filter(|c| c.looks_like_portrayal_catalogue())
     }
 
     /// Read raw bytes for a dataset entry from the underlying zip.
@@ -216,7 +214,11 @@ impl Corpus {
 
 fn build_index(
     archive: &mut ZipArchive<Cursor<Vec<u8>>>,
-) -> S164Result<(Vec<ExchangeSetEntry>, Vec<DatasetEntry>, Vec<CatalogueEntry>)> {
+) -> S164Result<(
+    Vec<ExchangeSetEntry>,
+    Vec<DatasetEntry>,
+    Vec<CatalogueEntry>,
+)> {
     let locations = discover_exchange_sets(archive)?;
     let mut exchange_sets = Vec::with_capacity(locations.len());
     let mut datasets = Vec::new();
