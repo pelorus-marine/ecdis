@@ -4086,6 +4086,7 @@ name = "s-101"
 version = "0.0.1"
 dependencies = [
  "iso8211",
+ "s-164",
  "thiserror 2.0.18",
 ]
 

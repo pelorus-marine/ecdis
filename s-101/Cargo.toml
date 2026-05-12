@@ -14,3 +14,6 @@ repository = "https://github.com/pelorus-marine/ecdis"
 [dependencies]
 iso8211 = { version = "0.1.5", path = "../iso8211" }
 thiserror = "2.0"
+
+[dev-dependencies]
+s-164 = { path = "../s-164" }
