@@ -24,8 +24,8 @@ pub struct CatalogueBackedPortrayal {
     palette_name: String,
     /// Display scale denominator; informational for stage 1.
     scale_denominator: Option<u32>,
-    /// Drafts produced by the most recent [`reset_for_chart`](Self::reset_for_chart) or
-    /// [`ingest_feature_graph`](Self::ingest_feature_graph).
+    /// Drafts produced by the most recent [`reset_for_chart`](PortrayalPipeline::reset_for_chart) or
+    /// [`ingest_feature_graph`](CatalogueBackedPortrayal::ingest_feature_graph).
     last_drafts: Vec<FeaturePortrayalDraft>,
 }
 
@@ -42,7 +42,8 @@ pub struct FeaturePortrayalDraft {
     /// Present when the draft was built from a [`FeatureGraph`] (`ingest_feature_graph`).
     pub foid: Option<FeatureObjectId>,
     /// Resolved feature-class **alias** from the feature catalogue, or **code** if no alias.
-    /// Set only for graph-driven drafts; [`None`] for raw [`reset_for_chart`] output.
+    /// Set only for graph-driven drafts; [`None`] for drafts produced by
+    /// [`reset_for_chart`](PortrayalPipeline::reset_for_chart) (raw FRID walk).
     pub feature_class_alias: Option<String>,
 }
 
@@ -126,9 +127,10 @@ impl CatalogueBackedPortrayal {
         self.catalogue.manifest.rules.iter().filter(|r| r.is_sub_template())
     }
 
-    /// Replace [`Self::last_drafts`] using resolved features from `graph` (one draft per
-    /// feature). Still references the catalogue **top-level** rule only — same stage-1
-    /// contract as [`reset_for_chart`](PortrayalPipeline::reset_for_chart).
+    /// Replace the draft list returned by [`drafts`](CatalogueBackedPortrayal::drafts) using
+    /// resolved features from `graph` (one draft per feature). Still references the catalogue
+    /// **top-level** rule only — same stage-1 contract as
+    /// [`reset_for_chart`](PortrayalPipeline::reset_for_chart).
     pub fn ingest_feature_graph(&mut self, graph: &FeatureGraph<'_>) {
         let Some(top) = top_level_rule(&self.catalogue) else {
             self.last_drafts.clear();
