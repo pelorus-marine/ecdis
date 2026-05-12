@@ -21,5 +21,8 @@ path = "examples/print.rs"
 
 [dependencies]
 
+[dev-dependencies]
+s-164 = { path = "../s-164" }
+
 [badges.maintenance]
 status = "experimental"

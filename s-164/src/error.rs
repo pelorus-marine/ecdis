@@ -32,6 +32,19 @@ pub enum S164Error {
 
     #[error("missing zip entry: {0}")]
     MissingZipEntry(String),
+
+    #[error("could not determine cache directory (set S164_CACHE_DIR)")]
+    CacheDirUnavailable,
+
+    #[error("could not derive cache filename from URL: {0}")]
+    CacheFilenameFromUrl(String),
+
+    #[error("SHA-256 mismatch for {what}: expected {expected}, got {actual}")]
+    Sha256Mismatch {
+        what: String,
+        expected: String,
+        actual: String,
+    },
 }
 
 pub type S164Result<T> = Result<T, S164Error>;

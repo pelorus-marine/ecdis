@@ -12,7 +12,9 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/pelorus-marine/ecdis"
 
 [dependencies]
+dirs = "5"
 roxmltree = "0.20"
+sha2 = "0.10"
 thiserror = "2.0"
 ureq = "2.12"
 zip = { version = "2.2", default-features = false, features = ["deflate"] }

@@ -18,17 +18,26 @@
 #![forbid(unsafe_code)]
 
 mod archive;
+mod cache;
 mod catalogue;
+mod corpus;
 mod download;
 mod error;
+mod verify;
 
 pub use archive::{
     ExchangeSetLocation, S100_ROOT_CATALOG_XML_SUFFIX, discover_exchange_sets, read_zip_entry,
     resolve_bundle_path, zip_archive_from_bytes,
 };
+pub use cache::{CACHE_DIR_ENV, cache_path_for_url, cache_root};
 pub use catalogue::{DatasetDiscovery, ExchangeCatalogue, parse_exchange_catalogue};
-pub use download::{DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, download_bytes, download_bytes_with_timeout};
+pub use corpus::{Classification, Corpus, DatasetEntry, ExchangeSetEntry};
+pub use download::{
+    DEFAULT_TEST_DATA_ZIP_V1_2_0_SHA256, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, cached_download,
+    download_bytes, download_bytes_with_timeout,
+};
 pub use error::{S164Error, S164Result};
+pub use verify::{sha256_hex, verify_sha256};
 
 use std::io::{Read, Seek};
 
