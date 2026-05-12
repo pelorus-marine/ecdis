@@ -30,8 +30,12 @@ pub use archive::{
     resolve_bundle_path, zip_archive_from_bytes,
 };
 pub use cache::{CACHE_DIR_ENV, cache_path_for_url, cache_root};
-pub use catalogue::{DatasetDiscovery, ExchangeCatalogue, parse_exchange_catalogue};
-pub use corpus::{Classification, Corpus, DatasetEntry, ExchangeSetEntry};
+pub use catalogue::{
+    CatalogueDiscovery, DatasetDiscovery, ExchangeCatalogue, parse_exchange_catalogue,
+};
+pub use corpus::{
+    CatalogueEntry, Classification, Corpus, DatasetEntry, ExchangeSetEntry,
+};
 pub use download::{
     DEFAULT_TEST_DATA_ZIP_V1_2_0_SHA256, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, cached_download,
     download_bytes, download_bytes_with_timeout,

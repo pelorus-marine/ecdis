@@ -83,11 +83,43 @@ pub struct DatasetEntry {
     pub classification: Classification,
 }
 
-/// Opened S-164 corpus: zip archive plus precomputed exchange-set / dataset indexes.
+/// One catalogue row (`S100_CatalogueDiscoveryMetadata`), e.g. feature / portrayal catalogue.
+#[derive(Debug, Clone)]
+pub struct CatalogueEntry {
+    /// Index into [`Corpus::exchange_sets`].
+    pub exchange_set_index: usize,
+    pub product_identifier: Option<String>,
+    /// `fileName` URI from the catalogue (`file:/…`).
+    pub file_uri: String,
+    /// Fully resolved entry path inside the zip (input to [`Corpus::read_catalogue`]).
+    pub zip_path: String,
+    /// Catalogue scope (`featureCatalogue`, `portrayalCatalogue`, …) as advertised.
+    pub scope: Option<String>,
+    /// Whether the catalogue file is a zip bundle (S-100 Part 9 portrayal catalogues are).
+    pub compressed: Option<bool>,
+    pub classification: Classification,
+}
+
+impl CatalogueEntry {
+    /// True for `fileName`s containing `Portrayal` (heuristic — IHO labels both FC and PC as
+    /// `scope="featureCatalogue"` in S-164 v1.2.0, so distinguish by filename + [`compressed`](Self::compressed)).
+    #[must_use]
+    pub fn looks_like_portrayal_catalogue(&self) -> bool {
+        self.file_uri
+            .rsplit('/')
+            .next()
+            .unwrap_or(&self.file_uri)
+            .to_ascii_lowercase()
+            .contains("portrayal")
+    }
+}
+
+/// Opened S-164 corpus: zip archive plus precomputed exchange-set / dataset / catalogue indexes.
 pub struct Corpus {
     archive: ZipArchive<Cursor<Vec<u8>>>,
     exchange_sets: Vec<ExchangeSetEntry>,
     datasets: Vec<DatasetEntry>,
+    catalogues: Vec<CatalogueEntry>,
 }
 
 impl Corpus {
@@ -116,11 +148,12 @@ impl Corpus {
     /// Construct from in-memory zip bytes. No verification is performed.
     pub fn from_bytes(bytes: Vec<u8>) -> S164Result<Self> {
         let mut archive = zip_archive_from_bytes(bytes)?;
-        let (exchange_sets, datasets) = build_index(&mut archive)?;
+        let (exchange_sets, datasets, catalogues) = build_index(&mut archive)?;
         Ok(Self {
             archive,
             exchange_sets,
             datasets,
+            catalogues,
         })
     }
 
@@ -136,6 +169,12 @@ impl Corpus {
         &self.datasets
     }
 
+    /// All catalogue artifacts discovered across every exchange set (FC / portrayal / alert).
+    #[must_use]
+    pub fn catalogues(&self) -> &[CatalogueEntry] {
+        &self.catalogues
+    }
+
     /// Iterator over datasets whose catalogue advertises `productIdentifier == product_id`.
     pub fn datasets_for_product<'a>(
         &'a self,
@@ -146,18 +185,42 @@ impl Corpus {
             .filter(move |d| d.product_identifier.as_deref() == Some(product_id))
     }
 
+    /// Catalogue rows whose `productIdentifier` exactly matches `product_id`.
+    pub fn catalogues_for_product<'a>(
+        &'a self,
+        product_id: &'a str,
+    ) -> impl Iterator<Item = &'a CatalogueEntry> + 'a {
+        self.catalogues
+            .iter()
+            .filter(move |c| c.product_identifier.as_deref() == Some(product_id))
+    }
+
+    /// Iterator over catalogue entries that **look like portrayal catalogues**
+    /// (filename contains `Portrayal`).
+    pub fn portrayal_catalogues(&self) -> impl Iterator<Item = &CatalogueEntry> + '_ {
+        self.catalogues
+            .iter()
+            .filter(|c| c.looks_like_portrayal_catalogue())
+    }
+
     /// Read raw bytes for a dataset entry from the underlying zip.
     pub fn read_dataset(&mut self, entry: &DatasetEntry) -> S164Result<Vec<u8>> {
+        read_zip_entry(&mut self.archive, &entry.zip_path)
+    }
+
+    /// Read raw bytes for a catalogue entry from the underlying zip.
+    pub fn read_catalogue(&mut self, entry: &CatalogueEntry) -> S164Result<Vec<u8>> {
         read_zip_entry(&mut self.archive, &entry.zip_path)
     }
 }
 
 fn build_index(
     archive: &mut ZipArchive<Cursor<Vec<u8>>>,
-) -> S164Result<(Vec<ExchangeSetEntry>, Vec<DatasetEntry>)> {
+) -> S164Result<(Vec<ExchangeSetEntry>, Vec<DatasetEntry>, Vec<CatalogueEntry>)> {
     let locations = discover_exchange_sets(archive)?;
     let mut exchange_sets = Vec::with_capacity(locations.len());
     let mut datasets = Vec::new();
+    let mut catalogues = Vec::new();
 
     for (index, location) in locations.iter().enumerate() {
         let catalogue = load_catalogue(archive, location)?;
@@ -181,9 +244,25 @@ fn build_index(
                 classification,
             });
         }
+        for cat in catalogue.catalogues {
+            let zip_path = match resolve_bundle_path(&location.prefix, &cat.file_uri) {
+                Ok(p) => p,
+                Err(S164Error::PathTraversal(_) | S164Error::InvalidFileUri(_)) => continue,
+                Err(e) => return Err(e),
+            };
+            catalogues.push(CatalogueEntry {
+                exchange_set_index: index,
+                product_identifier: cat.product_identifier,
+                file_uri: cat.file_uri,
+                zip_path,
+                scope: cat.scope,
+                compressed: cat.compressed,
+                classification,
+            });
+        }
     }
 
-    Ok((exchange_sets, datasets))
+    Ok((exchange_sets, datasets, catalogues))
 }
 
 fn load_catalogue(

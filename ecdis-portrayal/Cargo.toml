@@ -12,3 +12,6 @@ publish = false
 
 [dependencies]
 s-101 = { path = "../s-101" }
+
+[dev-dependencies]
+s-164 = { path = "../s-164" }
