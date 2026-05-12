@@ -122,8 +122,7 @@ fn pixel_transform(
     let cos_mid = mid_lat.to_radians().cos().abs().max(0.12);
     let fit_lon = lon_span * cos_mid;
     let fit_scale = (w / fit_lon).min(h / lat_span) * 0.88;
-    let denom_zoom =
-        (22_000f64 / f64::from(vp.scale_denominator.max(500))).sqrt().clamp(0.35, 6.0);
+    let denom_zoom = (22_000f64 / f64::from(vp.scale_denominator.max(500))).sqrt().clamp(0.35, 6.0);
     let scale = fit_scale * denom_zoom;
     let cos_vp = vp.center_lat_deg.to_radians().cos().abs().max(0.12);
 
@@ -170,16 +169,13 @@ impl SegBudget {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let enc = std::env::args().nth(1).ok_or_else(|| {
-        std::io::Error::new(std::io::ErrorKind::InvalidInput, usage())
-    })?;
+    let enc = std::env::args()
+        .nth(1)
+        .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::InvalidInput, usage()))?;
     let fc_path = std::env::args().nth(2).ok_or("missing FC xml path")?;
     let out_path = std::env::args().nth(3).ok_or("missing output svg path")?;
-    let scale_denom: u32 = std::env::args()
-        .nth(4)
-        .map(|s| s.parse())
-        .transpose()?
-        .unwrap_or(22_000);
+    let scale_denom: u32 =
+        std::env::args().nth(4).map(|s| s.parse()).transpose()?.unwrap_or(22_000);
 
     check_input_path("ENC", &enc)?;
     check_input_path("FC XML", &fc_path)?;
@@ -258,7 +254,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Surfaces (exterior fill, then strokes)
     for f in &graph.features {
-        if let Geometry::Surface(Surface2D { exterior, interiors }) = &f.geometry {
+        if let Geometry::Surface(Surface2D {
+            exterior,
+            interiors,
+        }) = &f.geometry
+        {
             if exterior.vertices.len() < 2 || !budget.take(exterior.vertices.len()) {
                 continue;
             }

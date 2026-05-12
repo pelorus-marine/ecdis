@@ -1112,10 +1112,12 @@ dependencies = [
  "pelorus-core-adapter",
  "pelorus-ecdis",
  "s-101",
+ "s-164",
  "slint",
  "slint-build",
  "tracing",
  "tracing-subscriber",
+ "zip",
 ]
 
 [[package]]
