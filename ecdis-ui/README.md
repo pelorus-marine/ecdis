@@ -46,7 +46,7 @@ Run Weston (nested session or hardware), ensure `WAYLAND_DISPLAY` is exported in
 
 ## Composition note
 
-The HUD mirrors [`pelorus-ecdis::ChartNavContext`](../pelorus-ecdis/) (**ENC via `Arc<S101Dataset>`**, own-ship snapshot, AIS vector stub): [`OwnShip`](../pelorus-ecdis/src/own_ship.rs) is built from a runtime [`OwnShipSnapshot`](../pelorus-ecdis/src/lib.rs) (env/CLI in this binary; production would use the adapter or a live Core path). Chart outlines come from [`CpuOutlinePortrayal`](../ecdis-portrayal/src/cpu_outline.rs) when the cell carries **C2IL** chains; otherwise the demo stub segments are shown.
+The HUD mirrors [`pelorus_adapter::ChartNavContext`](../../pelorus-adapter/) (**ENC via `Arc<S101Dataset>`**, own-ship snapshot, AIS vector stub): [`OwnShip`](../../pelorus-adapter/src/own_ship.rs) is built from a runtime [`OwnShipSnapshot`](../../pelorus-adapter/src/lib.rs) (env/CLI in this binary; production would use [`CoreSampleMapper`](../../pelorus-adapter/src/mapper.rs) or a live Core path). Chart outlines come from [`CpuOutlinePortrayal`](../ecdis-portrayal/src/cpu_outline.rs) when the cell carries **C2IL** chains; otherwise the demo stub segments are shown.
 
 ## Licensing
 

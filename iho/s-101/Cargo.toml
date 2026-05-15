@@ -1,0 +1,22 @@
+[package]
+name = "s-101"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.90.0"
+authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
+description = "IHO S-101 Electronic Navigational Chart (ENC) — decode from ISO 8211 (initial slice)."
+readme = "README.md"
+keywords = ["iho", "s-101", "enc", "ecdis", "s-100"]
+categories = ["science", "parser-implementations"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]
+iso8211 = { version = "0.1.5", path = "../../iso8211" }
+s-100 = { version = "0.0.1", path = "../s-100" }
+roxmltree = "0.21"
+thiserror = "2.0"
+zip = { version = "8.6", default-features = false, features = ["deflate"] }
+
+[dev-dependencies]
+s-164 = { path = "../s-164" }

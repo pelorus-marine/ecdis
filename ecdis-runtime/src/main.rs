@@ -8,10 +8,10 @@ use ecdis_behaviours::{
     AlarmSink, NavAlertKind, StderrAlarmSink, display_is_overscaled_vs_chart_minimum,
 };
 use ecdis_portrayal::{NoPortrayal, PortrayalPipeline};
-use pelorus_core_adapter::{
-    CoreSampleMapper, OwnShip, UnconfiguredMapper, merge_own_ship_fill_missing,
+use pelorus_adapter::{
+    ChartNavContext, CoreSampleMapper, OwnShip, UnconfiguredMapper,
+    merge_own_ship_fill_missing,
 };
-use pelorus_ecdis::ChartNavContext;
 use s_101::{FeatureCataloguePin, S101Dataset, TARGET_PRODUCT_SPECIFICATION_EDITION};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

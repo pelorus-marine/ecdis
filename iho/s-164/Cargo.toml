@@ -1,0 +1,20 @@
+[package]
+name = "s-164"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.90.0"
+authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
+description = "IHO S-164 test corpora — download zip bundles, discover exchange sets, parse CATALOG.XML."
+readme = "README.md"
+keywords = ["iho", "s-164", "s-100", "hydrography", "ecdis"]
+categories = ["science", "parser-implementations"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]
+dirs = "6"
+roxmltree = "0.21"
+sha2 = "0.11"
+thiserror = "2.0"
+ureq = "3.3"
+zip = { version = "8.6", default-features = false, features = ["deflate"] }

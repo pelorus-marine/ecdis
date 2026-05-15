@@ -22,7 +22,7 @@ path = "examples/print.rs"
 [dependencies]
 
 [dev-dependencies]
-s-164 = { path = "../s-164" }
+s-164 = { path = "../iho/s-164" }
 
 [badges.maintenance]
 status = "experimental"

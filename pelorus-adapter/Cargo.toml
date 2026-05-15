@@ -1,0 +1,16 @@
+[package]
+name = "pelorus-adapter"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.90.0"
+authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
+description = "S-101 ENC + Pelorus Core navigation snapshots and Core/Stream mapper traits (no transports)."
+readme = "README.md"
+keywords = ["pelorus", "ecdis", "s-101", "enc", "navigation"]
+categories = ["science"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+
+[dependencies]
+pelorus-core = { path = "../../platform/pelorus-core", default-features = false, features = ["std"] }
+s-101 = { version = "0.0.1", path = "../iho/s-101" }

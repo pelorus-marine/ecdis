@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define **[`PortrayalPipeline`](src/lib.rs)** hooks binding [`s_101::S101Dataset`](../s-101/) to future AML/portrayal engines, plus **[`ChartViewport`](src/chart_viewport.rs)** for mariner pan/zoom state tied to scale denominators.
+Define **[`PortrayalPipeline`](src/lib.rs)** hooks binding [`s_101::S101Dataset`](../iho/s-101/) to future AML/portrayal engines, plus **[`ChartViewport`](src/chart_viewport.rs)** for mariner pan/zoom state tied to scale denominators.
 
 ## Boundaries
 

@@ -17,6 +17,5 @@ path = "src/main.rs"
 [dependencies]
 ecdis-behaviours = { path = "../ecdis-behaviours" }
 ecdis-portrayal = { path = "../ecdis-portrayal" }
-pelorus-core-adapter = { path = "../pelorus-core-adapter" }
-pelorus-ecdis = { path = "../pelorus-ecdis" }
-s-101 = { path = "../s-101" }
+pelorus-adapter = { path = "../pelorus-adapter" }
+s-101 = { path = "../iho/s-101" }

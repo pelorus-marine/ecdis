@@ -13,7 +13,7 @@
 
 Full programme mission, [**Legacy Marine Data Ecosystem (LMDE)**](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md#lmde), and subsystem definitions (**Core**, **Stream**, **State**) live in the [Specifications architecture record](https://github.com/pelorus-marine/specifications/blob/main/ARCHITECTURE.md). This repository **does not** implement Pelorus **Core** (CAN FD) or **Stream** transports; it aligns with the ecosystem where **Stream** examples explicitly mention **ECDIS connectivity**—here as **data and portrayal**, not as a replacement for nautical truth on the Core fieldbus.
 
-The **`pelorus-ecdis`** crate holds **integration-shaped** boundaries toward **`pelorus-core`** via **`pelorus-core-adapter`** (mapper traits and timestamps—**no sockets** in-tree).
+The **`pelorus-adapter`** crate holds **integration-shaped** boundaries toward **`pelorus-core`** (chart + own-ship / AIS snapshots, mapper traits, timestamps—**no sockets** in-tree).
 
 ### Presence
 
@@ -29,8 +29,8 @@ The **`pelorus-ecdis`** crate holds **integration-shaped** boundaries toward **`
 Weaknesses in **ENC / S-100 toolchain friction** and **chart-application integration** that this codebase addresses:
 
 - **Opaque interchange stacks**: ISO 8211 and product XML/binary bundles are hard to navigate without typed, testable Rust boundaries—this workspace splits **structure** (`iso8211`), **framework** (`s-100`), and **product crates** (`s-101`, …) so callers progress deliberately.
-- **Conformance vs exploration**: Published **S-164** test corpora and vendor bundles need **routing** separate from **semantic decode**—[`s-164`](s-164/) packages discovery; **product crates** own interchange semantics (see [Conformance corpora vs product decode](#conformance-corpora-vs-product-decode) below).
-- **Bridge integration gaps**: Operators want **chart context** and **own-ship / AIS** snapshots aligned with Pelorus **DCID**-style contracts—**`pelorus-ecdis`** and **`pelorus-core-adapter`** define those seams **without** dragging Core or Stream sockets into every chart crate.
+- **Conformance vs exploration**: Published **S-164** test corpora and vendor bundles need **routing** separate from **semantic decode**—[`s-164`](iho/s-164/) packages discovery; **product crates** own interchange semantics (see [Conformance corpora vs product decode](#conformance-corpora-vs-product-decode) below).
+- **Bridge integration gaps**: Operators want **chart context** and **own-ship / AIS** snapshots aligned with Pelorus **DCID**-style contracts—**`pelorus-adapter`** defines those seams **without** dragging Core or Stream sockets into every chart crate.
 - **Presentation portability**: Display stacks differ (CLI demo, Slint IVI shell)—**`ecdis-portrayal`** / **`ecdis-behaviours`** isolate portrayal and behaviour stubs from interchange decoding.
 
 **Pelorus ECDIS** does **not** claim **IMO type approval** or bit-identical behaviour vs any vendor ECDIS kernel—those remain matters for integrators, classification societies, and normative IHO/IMO texts.
@@ -47,8 +47,7 @@ Data flows **up** from interchange bytes toward application types:
 ISO 8211 files / records  →  `iso8211` (structure + raw fields)
         →  `s-100` (shared S-100 model constructs, where applicable)
         →  product crates (`s-101`, `s-102`, `s-103`, …) typed features / coverages
-        →  `pelorus-ecdis` (ENC + own-ship / AIS snapshot for bridge services)
-        →  `pelorus-core-adapter` (Core/Stream mapper traits + timestamps — no sockets)
+        →  `pelorus-adapter` (ENC + own-ship / AIS + Core/Stream mapper traits — no sockets)
         →  `ecdis-portrayal` / `ecdis-behaviours` (presentation + nav-behaviour stubs)
         →  `ecdis-runtime` (CLI composition demo) / `ecdis-ui` (Slint Wayland IVI shell)
 
@@ -72,31 +71,30 @@ Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable (
 | [`ecdis-portrayal/`](ecdis-portrayal/) | — | Portrayal trait + [`ChartViewport`](ecdis-portrayal/src/chart_viewport.rs) stubs; AML execution TBD. |
 | [`ecdis-runtime/`](ecdis-runtime/) | — | Composition-root demo (`ecdis-runtime` binary). |
 | [`ecdis-ui/`](ecdis-ui/) | — | Slint ENC HUD + stub chart for Weston/Yocto targets — [`README`](ecdis-ui/README.md). |
-| [`pelorus-core-adapter/`](pelorus-core-adapter/) | — | Core/Stream sample → `pelorus-ecdis` snapshots (types only). |
-| [`pelorus-ecdis/`](pelorus-ecdis/) | — | [`s-101`](s-101/) + own-ship / AIS integration types. |
-| [`s-61/`](s-61/) | **S-61** | Raster Navigational Charts (RNC)—not S-100 vector. |
-| [`s-97/`](s-97/) | **S-97** | Guidelines for S-100 product specifications (stub). |
-| [`s-98/`](s-98/) | **S-98** | Data product interoperability (stub). |
-| [`s-99/`](s-99/) | **S-99** | GI registry operational procedures (stub). |
-| [`s-100/`](s-100/) | **S-100** | Shared **geometry** (WGS84) + **FeatureObjectId**; used by `s-101` and `ecdis-portrayal`. |
-| [`s-101/`](s-101/) | **S-101** | ENC — ISO 8211 load, typed records, feature-catalogue XML subset, **feature graph** (FC + geometry). |
-| [`s-102/`](s-102/) | **S-102** | Bathymetric Surface (S-100 product; stub). |
-| [`s-103/`](s-103/) | **S-103** | Sub-surface Navigation (stub). |
-| [`s-104/`](s-104/) | **S-104** | Water Level Information for Surface Navigation (stub). |
-| [`s-111/`](s-111/) | **S-111** | Surface Currents (stub). |
-| [`s-112/`](s-112/) | **S-112** | Reserved / open product slot (stub). |
-| [`s-121/`](s-121/) | **S-121** | Maritime limits and boundaries (stub). |
-| [`s-122/`](s-122/) | **S-122** | Marine protected areas (stub). |
-| [`s-123/`](s-123/) | **S-123** | Marine radio services (stub). |
-| [`s-124/`](s-124/) | **S-124** | Navigational Warnings (stub). |
-| [`s-125/`](s-125/) | **S-125** | Marine aids to navigation / AtoN (stub). |
-| [`s-126/`](s-126/) | **S-126** | Marine physical environment (stub). |
-| [`s-127/`](s-127/) | **S-127** | Marine Traffic Management (stub). |
-| [`s-128/`](s-128/) | **S-128** | Catalogue of nautical products (stub). |
-| [`s-129/`](s-129/) | **S-129** | Under Keel Clearance Management / UKCM (stub). |
-| [`s-130/`](s-130/) | **S-130** | Polygonal demarcations of global sea areas (stub). |
-| [`s-131/`](s-131/) | **S-131** | Marine harbour infrastructure (stub). |
-| [`s-164/`](s-164/) | **S-164** | Test corpus zip download + exchange-set / `CATALOG.XML` discovery. |
+| [`pelorus-adapter/`](pelorus-adapter/) | — | [`s-101`](iho/s-101/) + own-ship / AIS snapshots + Core/Stream mapper traits. |
+| [`s-61/`](iho/s-61/) | **S-61** | Raster Navigational Charts (RNC)—not S-100 vector. |
+| [`s-97/`](iho/s-97/) | **S-97** | Guidelines for S-100 product specifications (stub). |
+| [`s-98/`](iho/s-98/) | **S-98** | Data product interoperability (stub). |
+| [`s-99/`](iho/s-99/) | **S-99** | GI registry operational procedures (stub). |
+| [`s-100/`](iho/s-100/) | **S-100** | Shared **geometry** (WGS84) + **FeatureObjectId**; used by `s-101` and `ecdis-portrayal`. |
+| [`s-101/`](iho/s-101/) | **S-101** | ENC — ISO 8211 load, typed records, feature-catalogue XML subset, **feature graph** (FC + geometry). |
+| [`s-102/`](iho/s-102/) | **S-102** | Bathymetric Surface (S-100 product; stub). |
+| [`s-103/`](iho/s-103/) | **S-103** | Sub-surface Navigation (stub). |
+| [`s-104/`](iho/s-104/) | **S-104** | Water Level Information for Surface Navigation (stub). |
+| [`s-111/`](iho/s-111/) | **S-111** | Surface Currents (stub). |
+| [`s-112/`](iho/s-112/) | **S-112** | Reserved / open product slot (stub). |
+| [`s-121/`](iho/s-121/) | **S-121** | Maritime limits and boundaries (stub). |
+| [`s-122/`](iho/s-122/) | **S-122** | Marine protected areas (stub). |
+| [`s-123/`](iho/s-123/) | **S-123** | Marine radio services (stub). |
+| [`s-124/`](iho/s-124/) | **S-124** | Navigational Warnings (stub). |
+| [`s-125/`](iho/s-125/) | **S-125** | Marine aids to navigation / AtoN (stub). |
+| [`s-126/`](iho/s-126/) | **S-126** | Marine physical environment (stub). |
+| [`s-127/`](iho/s-127/) | **S-127** | Marine Traffic Management (stub). |
+| [`s-128/`](iho/s-128/) | **S-128** | Catalogue of nautical products (stub). |
+| [`s-129/`](iho/s-129/) | **S-129** | Under Keel Clearance Management / UKCM (stub). |
+| [`s-130/`](iho/s-130/) | **S-130** | Polygonal demarcations of global sea areas (stub). |
+| [`s-131/`](iho/s-131/) | **S-131** | Marine harbour infrastructure (stub). |
+| [`s-164/`](iho/s-164/) | **S-164** | Test corpus zip download + exchange-set / `CATALOG.XML` discovery. |
 
 Exact **members**: [`Cargo.toml`](Cargo.toml) `workspace.members` (matches table above).
 
@@ -104,7 +102,7 @@ Exact **members**: [`Cargo.toml`](Cargo.toml) `workspace.members` (matches table
 
 ### Conformance corpora vs product decode
 
-[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in crate **integration tests** (for example [`s-101/tests/s164_corpus_integration.rs`](s-101/tests/s164_corpus_integration.rs)), `examples/`, binaries, and applications. Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
+[`s-164`](iho/s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in crate **integration tests** (for example [`s-101/tests/s164_corpus_integration.rs`](iho/s-101/tests/s164_corpus_integration.rs)), `examples/`, binaries, and applications. Details: [s-164/ARCHITECTURE.md](iho/s-164/ARCHITECTURE.md#separation-of-concerns).
 
 ---
 

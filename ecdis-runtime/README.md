@@ -1,6 +1,6 @@
 # ecdis-runtime
 
-**Composition demo** binary: [`s-101`](../s-101/) load → [`pelorus-ecdis::ChartNavContext`](../pelorus-ecdis/) → [`ecdis-portrayal`](../ecdis-portrayal/) + [`ecdis-behaviours`](../ecdis-behaviours/) stubs → [`pelorus-core-adapter`](../pelorus-core-adapter/) mapper hooks.
+**Composition demo** binary: [`s-101`](../iho/s-101/) load → [`pelorus_adapter::ChartNavContext`](../../pelorus-adapter/) → [`ecdis-portrayal`](../ecdis-portrayal/) + [`ecdis-behaviours`](../ecdis-behaviours/) stubs + mapper hooks from the same crate.
 
 ```bash
 cargo run -p ecdis-runtime -- ./path/to/cell.000

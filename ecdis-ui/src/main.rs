@@ -12,8 +12,9 @@ use ecdis_portrayal::{
     ChartViewport, ChartViewportState, CpuOutlinePortrayal, UI_CHART_VIEWBOX_HEIGHT_PX,
     UI_CHART_VIEWBOX_WIDTH_PX, approx_own_ship_screen_px, demo_stub_segments_px,
 };
-use pelorus_core_adapter::{CoreSampleMapper, OwnShip, UnconfiguredMapper};
-use pelorus_ecdis::{ChartNavContext, OwnShipSnapshot};
+use pelorus_adapter::{
+    ChartNavContext, CoreSampleMapper, OwnShip, OwnShipSnapshot, UnconfiguredMapper,
+};
 use s_101::{
     FcEditionSummary, FeatureCataloguePin, S101Dataset, TARGET_PRODUCT_SPECIFICATION_EDITION,
     parse_fc_edition_summary,
@@ -183,7 +184,7 @@ fn pixel_delta_to_deg(dx: f32, dy: f32, scale_denom: u32) -> (f64, f64) {
     (-f64::from(dx) * k, f64::from(dy) * k)
 }
 
-/// Default position matches [`pelorus-ecdis`](../pelorus-ecdis/) smoke tests and prior demo merge.
+/// Default position matches [`pelorus-adapter`](../pelorus-adapter/) smoke tests and prior demo merge.
 const DEFAULT_OWNSHIP_LAT_DEG: f64 = 51.0;
 const DEFAULT_OWNSHIP_LON_DEG: f64 = 2.0;
 /// Former demo used `sog_mps: 3.0`; snapshot stores knots.

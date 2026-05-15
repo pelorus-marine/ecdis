@@ -1,4 +1,4 @@
-# pelorus-ecdis depends on ../../platform/pelorus-core (see pelorus-ecdis/Cargo.toml).
+# pelorus-adapter depends on ../../platform/pelorus-core (see pelorus-adapter/Cargo.toml).
 # With the default Actions layout, ../../ is the directory above $GITHUB_WORKSPACE.
 name: Checkout platform sibling repo
 description: Clone pelorus-marine/platform beside the Actions workspace for path dependencies.

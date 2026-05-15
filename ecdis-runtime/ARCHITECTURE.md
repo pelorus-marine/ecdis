@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Thin **composition root** tying ENC parsing ([`s_101`](../s-101/)), bridge structs ([`pelorus_ecdis`](../pelorus-ecdis/)), portrayal hooks ([`ecdis_portrayal`](../ecdis-portrayal/)), behaviour stubs ([`ecdis_behaviours`](../ecdis-behaviours/)), and mapper scaffolding ([`pelorus_core_adapter`](../pelorus-core-adapter/)).
+Thin **composition root** tying ENC parsing ([`s_101`](../iho/s-101/)), [`pelorus_adapter`](../../pelorus-adapter/) (`ChartNavContext` + mappers), portrayal hooks ([`ecdis_portrayal`](../ecdis-portrayal/)), and behaviour stubs ([`ecdis_behaviours`](../ecdis-behaviours/)).
 
 ## Boundaries
 

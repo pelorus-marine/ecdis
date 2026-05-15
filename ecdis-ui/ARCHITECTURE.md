@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Slint-based **Wayland-facing** UI binary (`ecdis-ui`) that loads [`s_101::S101Dataset`](../s-101/), displays semantic inventory / edition pins, merges demo [`OwnShip`](../pelorus-ecdis/src/own_ship.rs) data via [`pelorus-core-adapter`](../pelorus-core-adapter/), drives [`ChartViewport`](../ecdis-portrayal/src/chart_viewport.rs) + [`PortrayalPipeline`](../ecdis-portrayal/src/lib.rs), and surfaces [`AlarmSink`](../ecdis-behaviours/src/lib.rs) events.
+Slint-based **Wayland-facing** UI binary (`ecdis-ui`) that loads [`s_101::S101Dataset`](../iho/s-101/), displays semantic inventory / edition pins, merges demo [`OwnShip`](../../pelorus-adapter/src/own_ship.rs) via [`pelorus-adapter`](../../pelorus-adapter/), drives [`ChartViewport`](../ecdis-portrayal/src/chart_viewport.rs) + [`PortrayalPipeline`](../ecdis-portrayal/src/lib.rs), and surfaces [`AlarmSink`](../ecdis-behaviours/src/lib.rs) events.
 
 ## Boundaries
 
