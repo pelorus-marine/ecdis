@@ -15,7 +15,7 @@ The crate is structured as two layers:
 
 **`s-164` does not own:** ISO 8211 semantics; S-101 (or other product) structural or feature decoding; portrayal; ECDIS runtime behaviour; full per-scenario pass/fail interpretation of the conformance manual beyond prefix-level classification; cryptographic verification of `CATALOG.SIGN` (if added later, treat as an explicitly bounded submodule or separate concern).
 
-**Orchestration above this crate:** Any workflow that **decodes** dataset bytes — e.g. "feed ENC bytes to a product decoder → assert expectations" — belongs in `examples/`, crate `tests/`, applications, or **[`iho-testdata`](../iho-testdata/)**. **`s-164` must not depend on [`s-101`](../s-101/) or other product crates.**
+**Orchestration above this crate:** Any workflow that **decodes** dataset bytes — e.g. "feed ENC bytes to a product decoder → assert expectations" — belongs in `examples/`, crate `tests/` (for example **[`s-101` corpus integration tests](../s-101/tests/s164_corpus_integration.rs)**), applications, or workspace binaries. **`s-164` must not depend on [`s-101`](../s-101/) or other product crates.**
 
 ```mermaid
 flowchart LR

@@ -68,7 +68,6 @@ Hyphenated **`s-*`** names align with **IHO S-xxx** numbering where applicable (
 | Directory | IHO / ISO | Role |
 |-----------|-----------|------|
 | [`iso8211/`](iso8211/) | ISO/IEC 8211 | Binary interchange (DDR / data records). |
-| [`iho-testdata/`](iho-testdata/) | — | End-to-end: S-164 corpus zip → S-101 `load_bytes` (orchestration only). |
 | [`ecdis-behaviours/`](ecdis-behaviours/) | — | ECDIS behaviour stubs (alarms, overscale predicate). |
 | [`ecdis-portrayal/`](ecdis-portrayal/) | — | Portrayal trait + [`ChartViewport`](ecdis-portrayal/src/chart_viewport.rs) stubs; AML execution TBD. |
 | [`ecdis-runtime/`](ecdis-runtime/) | — | Composition-root demo (`ecdis-runtime` binary). |
@@ -105,7 +104,7 @@ Exact **members**: [`Cargo.toml`](Cargo.toml) `workspace.members` (matches table
 
 ### Conformance corpora vs product decode
 
-[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in binaries, tests, applications, or **[`iho-testdata`](iho-testdata/)** (example orchestration binary). Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
+[`s-164`](s-164/) handles **packaging and routing** for published test bundles (zip, exchange-set layout, minimal `CATALOG.XML` discovery metadata). **Product crates** (`s-101`, …) handle **interchange semantics** for chart data. There is **no** intended workspace dependency edge **`s-164` → `s-101`** or **`s-101` → `s-164`**; glue belongs in crate **integration tests** (for example [`s-101/tests/s164_corpus_integration.rs`](s-101/tests/s164_corpus_integration.rs)), `examples/`, binaries, and applications. Details: [s-164/ARCHITECTURE.md](s-164/ARCHITECTURE.md#separation-of-concerns).
 
 ---
 

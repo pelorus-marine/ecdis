@@ -23,7 +23,7 @@ ecdis/
   s-100/ … s-129/    # IHO products (s-103 = sub-surface navigation; s-101 = ENC slice)
 ```
 
-Full crate table: [ARCHITECTURE.md](ARCHITECTURE.md).
+Crate index: [below](#crate-index). Design layering: [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Prerequisites
 
@@ -52,13 +52,59 @@ cargo run -p iso8211 --example print -- path/to/file.000
 cargo run -p ecdis-ui --release -- path/to/cell.000
 ```
 
-## Crate docs
+## Crate index
 
-| Crate | README | Architecture |
-|-------|--------|--------------|
-| iso8211 | [iso8211/README.md](iso8211/README.md) | [iso8211/ARCHITECTURE.md](iso8211/ARCHITECTURE.md) |
-| pelorus-ecdis | [pelorus-ecdis/README.md](pelorus-ecdis/README.md) | [pelorus-ecdis/ARCHITECTURE.md](pelorus-ecdis/ARCHITECTURE.md) |
-| s-100 … s-129 | `README.md` in each directory | `ARCHITECTURE.md` in each directory |
+Workspace members from [`Cargo.toml`](Cargo.toml). Each row links the crate directory; open **`README.md`** there for usage and **`ARCHITECTURE.md`** for design notes (where present).
+
+### Interchange and foundation
+
+| Crate | Description |
+|-------|-------------|
+| [iso8211](iso8211/) | ISO 8211 data format parsing (IHO S-57 / S-100 family exchange format). |
+| [s-100](s-100/) | IHO S-100 universal hydrographic data model — shared Rust types (stub). |
+
+### ECDIS application
+
+| Crate | Description |
+|-------|-------------|
+| [ecdis-behaviours](ecdis-behaviours/) | ECDIS behaviour stubs (overscale, alarms) — IMO logic incremental. |
+| [ecdis-portrayal](ecdis-portrayal/) | Portrayal pipeline traits for S-101 charts (AML integration stub). |
+| [ecdis-runtime](ecdis-runtime/) | Composition-root demo: ENC load + `ChartNavContext` + portrayal/behaviour stubs. |
+| [ecdis-ui](ecdis-ui/) | Slint Wayland UI shell for ENC load + `ChartNavContext` (IVI-style demo). |
+
+### Pelorus integration
+
+| Crate | Description |
+|-------|-------------|
+| [pelorus-ecdis](pelorus-ecdis/) | Bridge S-101 ENC data with Pelorus Core–style navigation inputs (own-ship, AIS). |
+| [pelorus-core-adapter](pelorus-core-adapter/) | Map Pelorus Core / Stream samples into `pelorus-ecdis` snapshots (no transports). |
+
+### IHO product libraries (`s-*`)
+
+| Crate | Description |
+|-------|-------------|
+| [s-61](s-61/) | **S-61** raster navigational charts (RNC) — placeholder. |
+| [s-97](s-97/) | **S-97** guidelines for S-100 product specifications — placeholder. |
+| [s-98](s-98/) | **S-98** data product interoperability — placeholder. |
+| [s-99](s-99/) | **S-99** GI registry operational procedures — placeholder. |
+| [s-101](s-101/) | **S-101** ENC — decode from ISO 8211 (initial slice). |
+| [s-102](s-102/) | **S-102** bathymetric surface — types and parsers (stub). |
+| [s-103](s-103/) | **S-103** sub-surface navigation — types and parsers (stub). |
+| [s-104](s-104/) | **S-104** physical environment — types and parsers (stub). |
+| [s-111](s-111/) | **S-111** surface currents — types and parsers (stub). |
+| [s-112](s-112/) | **S-112** reserved / open product slot — placeholder. |
+| [s-121](s-121/) | **S-121** maritime limits and boundaries — placeholder. |
+| [s-122](s-122/) | **S-122** marine protected areas — placeholder. |
+| [s-123](s-123/) | **S-123** marine radio services — placeholder. |
+| [s-124](s-124/) | **S-124** navigational warnings — types and parsers (stub). |
+| [s-125](s-125/) | **S-125** marine aids to navigation (AtoN) — placeholder. |
+| [s-126](s-126/) | **S-126** marine physical environment — placeholder. |
+| [s-127](s-127/) | **S-127** marine protected areas — types and parsers (stub). |
+| [s-128](s-128/) | **S-128** catalogue of nautical products — placeholder. |
+| [s-129](s-129/) | **S-129** under-keel clearance management — types and parsers (stub). |
+| [s-130](s-130/) | **S-130** polygonal demarcations of global sea areas — placeholder. |
+| [s-131](s-131/) | **S-131** marine harbour infrastructure — placeholder. |
+| [s-164](s-164/) | **S-164** test corpora — download zip bundles, discover exchange sets, parse `CATALOG.XML`. |
 
 ## Contributing
 

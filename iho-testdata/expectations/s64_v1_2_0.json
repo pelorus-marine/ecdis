@@ -1,9 +1,0 @@
-{
-  "schema_version": 1,
-  "pinned_release_tag": "v1.2.0",
-  "pinned_asset": "S-64_1.2.0.zip",
-  "min_exchange_sets": 28,
-  "min_parsed_s101_ok": 30,
-  "max_parse_fail": 25,
-  "max_io_fail": 10
-}

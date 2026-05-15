@@ -71,7 +71,7 @@ jobs:
           RUSTDOCFLAGS: -D warnings
         run: cargo doc --workspace --no-deps
 
-  iho-testdata:
+  s-101-s164-corpus:
     name: IHO corpus integration (S-164 zip → S-101)
     runs-on: ubuntu-latest
     env:
@@ -89,7 +89,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: target/iho-cache/S-64_1.2.0.zip
-          key: ${{ runner.os }}-iho-testdata-${{ env.IHO_S164_CACHE_KEY }}
+          key: ${{ runner.os }}-s101-s164-${{ env.IHO_S164_CACHE_KEY }}
 
       - name: Download corpus (cache miss)
         if: steps.iho-cache.outputs.cache-hit != 'true'
@@ -97,7 +97,7 @@ jobs:
           mkdir -p target/iho-cache
           curl -fsSL -o target/iho-cache/S-64_1.2.0.zip "$IHO_S164_URL"
 
-      - name: Integration test (thresholds in expectations/)
+      - name: Integration test (S-101 graph over full corpus)
         env:
           IHO_TESTDATA_ZIP: ${{ github.workspace }}/target/iho-cache/S-64_1.2.0.zip
-        run: cargo test -p iho-testdata s64_corpus_meets_thresholds --verbose -- --ignored --nocapture
+        run: cargo test -p s-101 --test s164_corpus_integration decodes_and_summarises_corpus_from_local_zip --verbose -- --ignored --nocapture

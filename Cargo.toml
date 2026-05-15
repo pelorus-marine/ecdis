@@ -6,7 +6,6 @@ members = [
     "ecdis-runtime",
     "ecdis-ui",
     "iso8211",
-    "iho-testdata",
     "pelorus-core-adapter",
     "pelorus-ecdis",
     "s-100",

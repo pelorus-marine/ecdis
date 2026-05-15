@@ -39,7 +39,7 @@ Provide **typed access** to **S-101 ENC** datasets: load **ISO 8211** exchange f
 
 - Unit tests for `decode` / `binary` helpers.
 - Optional **`testdata/s101_sample.000`** at workspace root: `tests/optional_fixture.rs` and [`pelorus-ecdis`](../pelorus-ecdis/) tests load it when present (CI may omit the file).
-- **`tests/s164_corpus_integration.rs`** (ignored by default): full **S-164** zip via [`s_164::Corpus`](../s-164/) — `FeatureCatalogue::parse_xml` + `build_feature_graph` over every positive S-101 cell.
+- **`tests/s164_corpus_integration.rs`** (`#[ignore]` unless **`IHO_TESTDATA_ZIP`** is set): full **S-164** zip via [`s_164::Corpus`](../s-164/) — `FeatureCatalogue::parse_xml` + `build_feature_graph` over every positive S-101 cell. CI runs **`decodes_and_summarises_corpus_from_local_zip`** against a cached **S-64** zip (see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)).
 
 ## Risks
 

@@ -9,11 +9,11 @@
 //!
 //! ```bash
 //! IHO_TESTDATA_ZIP=/tmp/S-64_1.2.0.zip \
-//!   cargo test -p s-101 --test s164_corpus_integration -- --ignored --nocapture
+//!   cargo test -p s-101 --test s164_corpus_integration decodes_and_summarises_corpus_from_local_zip -- --ignored --nocapture
 //! ```
 //!
-//! CI continues to use the lighter **`iho-testdata`** thresholds test; this file stays
-//! `#[ignore]` because [`Corpus::fetch_default`] may download the corpus once.
+//! [`Corpus::fetch_default`] stays `#[ignore]` because it downloads the corpus; CI uses a cached
+//! zip and **`IHO_TESTDATA_ZIP`** with **`decodes_and_summarises_corpus_from_local_zip`** (see `.github/workflows/ci.yml`).
 
 use std::collections::HashMap;
 

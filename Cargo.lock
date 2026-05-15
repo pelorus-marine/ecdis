@@ -2245,17 +2245,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "iho-testdata"
-version = "0.0.1"
-dependencies = [
- "s-101",
- "s-164",
- "serde",
- "serde_json",
- "zip",
-]
-
-[[package]]
 name = "image"
 version = "0.25.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
