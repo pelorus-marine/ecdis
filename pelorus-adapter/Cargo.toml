@@ -13,4 +13,4 @@ repository = "https://github.com/pelorus-marine/ecdis"
 
 [dependencies]
 pelorus-core = { path = "../../platform/pelorus-core", default-features = false, features = ["std"] }
-s-101 = { version = "0.0.1", path = "../iho/s-101" }
+s-101 = { workspace = true }

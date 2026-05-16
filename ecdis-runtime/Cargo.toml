@@ -15,7 +15,7 @@ name = "ecdis-runtime"
 path = "src/main.rs"
 
 [dependencies]
-ecdis-behaviours = { path = "../ecdis-behaviours" }
-ecdis-portrayal = { path = "../ecdis-portrayal" }
-pelorus-adapter = { path = "../pelorus-adapter" }
-s-101 = { path = "../iho/s-101" }
+ecdis-behaviours = { workspace = true }
+ecdis-portrayal = { workspace = true }
+pelorus-adapter = { workspace = true }
+s-101 = { workspace = true }

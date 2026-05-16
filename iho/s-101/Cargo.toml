@@ -13,10 +13,10 @@ repository = "https://github.com/pelorus-marine/ecdis"
 
 [dependencies]
 iso8211 = { version = "0.1.5", path = "../../iso8211" }
-s-100 = { version = "0.0.1", path = "../s-100" }
-roxmltree = "0.21"
-thiserror = "2.0"
-zip = { version = "8.6", default-features = false, features = ["deflate"] }
+s-100 = { workspace = true }
+roxmltree = { workspace = true }
+thiserror = { workspace = true }
+zip = { workspace = true }
 
 [dev-dependencies]
-s-164 = { path = "../s-164" }
+s-164 = { workspace = true }

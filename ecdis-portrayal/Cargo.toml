@@ -11,8 +11,8 @@ repository = "https://github.com/pelorus-marine/ecdis"
 publish = false
 
 [dependencies]
-s-100 = { path = "../iho/s-100" }
-s-101 = { path = "../iho/s-101" }
+s-100 = { workspace = true }
+s-101 = { workspace = true }
 
 [dev-dependencies]
-s-164 = { path = "../iho/s-164" }
+s-164 = { workspace = true }

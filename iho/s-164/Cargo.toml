@@ -13,8 +13,8 @@ repository = "https://github.com/pelorus-marine/ecdis"
 
 [dependencies]
 dirs = "6"
-roxmltree = "0.21"
+roxmltree = { workspace = true }
 sha2 = "0.11"
-thiserror = "2.0"
+thiserror = { workspace = true }
 ureq = "3.3"
-zip = { version = "8.6", default-features = false, features = ["deflate"] }
+zip = { workspace = true }

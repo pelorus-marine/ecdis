@@ -16,10 +16,10 @@ name = "ecdis-ui"
 path = "src/main.rs"
 
 [dependencies]
-ecdis-behaviours = { path = "../ecdis-behaviours" }
-ecdis-portrayal = { path = "../ecdis-portrayal" }
-pelorus-adapter = { path = "../pelorus-adapter" }
-s-101 = { path = "../iho/s-101" }
+ecdis-behaviours = { workspace = true }
+ecdis-portrayal = { workspace = true }
+pelorus-adapter = { workspace = true }
+s-101 = { workspace = true }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 slint = { version = "1.16.1", default-features = false, features = [
@@ -30,8 +30,8 @@ slint = { version = "1.16.1", default-features = false, features = [
 ] }
 
 [dev-dependencies]
-s-164 = { path = "../iho/s-164" }
-zip = { version = "8.6", default-features = false, features = ["deflate"] }
+s-164 = { workspace = true }
+zip = { workspace = true }
 
 [build-dependencies]
 slint-build = "1.16.1"

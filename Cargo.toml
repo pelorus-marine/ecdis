@@ -32,6 +32,21 @@ members = [
     "iho/s-99",
 ]
 
+# Crates referenced from more than one workspace member must be listed here;
+# members use `{ workspace = true }`.
+[workspace.dependencies]
+# crates.io (shared)
+roxmltree = "0.21"
+thiserror = "2.0"
+zip = { version = "8.6", default-features = false, features = ["deflate"] }
+# workspace path crates (shared)
+s-100 = { version = "0.0.1", path = "iho/s-100" }
+s-101 = { version = "0.0.1", path = "iho/s-101" }
+s-164 = { path = "iho/s-164" }
+ecdis-behaviours = { path = "ecdis-behaviours" }
+ecdis-portrayal = { path = "ecdis-portrayal" }
+pelorus-adapter = { path = "pelorus-adapter" }
+
 [profile.release]
 lto = "thin"
 
