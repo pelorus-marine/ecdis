@@ -54,7 +54,12 @@ cargo run -p ecdis-ui --release -- path/to/cell.000
 
 # Dev-only portrayal gallery (Slint — see ecdis-portrayal-viewer/README.md)
 cargo run -p ecdis-portrayal-viewer -- path/to/cell.000
+
+# GPL source-offer archive before shipping ecdis-ui on hardware (Path A)
+./scripts/create-gpl-source-offer.sh HEAD target/gpl-source-offer-ecdis-ui.tar.xz
 ```
+
+Firmware **`ecdis-ui`** distribution uses **GPL-3.0** (Slint). See [docs/shipping-licenses.md](docs/shipping-licenses.md).
 
 ## Crate index
 

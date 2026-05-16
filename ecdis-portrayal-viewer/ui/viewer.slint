@@ -32,6 +32,7 @@ export component ViewerWindow inherits Window {
 
     in-out property <string> enc-label;
     in-out property <string> catalogue-label;
+    in-out property <string> viewport-label;
     in-out property <string> caption-label;
     in-out property <int> scene-index;
     in-out property <brush> chart-background;
@@ -46,12 +47,23 @@ export component ViewerWindow inherits Window {
     in-out property <[string]> symbol-ids;
     in-out property <int> symbol-index;
 
+    private property <length> chart-pan-last-x: 0px;
+    private property <length> chart-pan-last-y: 0px;
+
     callback scene-selected(int);
     callback display-day();
     callback display-dusk();
     callback display-night();
     callback symbol-prev();
     callback symbol-next();
+    callback chart-pan-pixel(dx: length, dy: length);
+    callback chart-zoom-wheel(delta-y: length);
+    callback chart-zoom-in();
+    callback chart-zoom-out();
+    callback pan-north();
+    callback pan-south();
+    callback pan-west();
+    callback pan-east();
 
     HorizontalBox {
         padding: 8px;
@@ -67,7 +79,7 @@ export component ViewerWindow inherits Window {
             }
 
             Button {
-                text: "C2IL outline";
+                text: "Chart";
                 clicked => { root.scene-selected(0); }
             }
             Button {
@@ -102,6 +114,49 @@ export component ViewerWindow inherits Window {
                 clicked => { root.display-night(); }
             }
 
+            Rectangle { height: 8px; }
+
+            Text {
+                text: "Chart navigation";
+                font-weight: 700;
+            }
+            HorizontalBox {
+                spacing: 4px;
+                Button {
+                    text: "−";
+                    clicked => { root.chart-zoom-out(); }
+                }
+                Button {
+                    text: "+";
+                    clicked => { root.chart-zoom-in(); }
+                }
+            }
+            Button {
+                text: "▲";
+                clicked => { root.pan-north(); }
+            }
+            HorizontalBox {
+                spacing: 4px;
+                Button {
+                    text: "◀";
+                    clicked => { root.pan-west(); }
+                }
+                Button {
+                    text: "▶";
+                    clicked => { root.pan-east(); }
+                }
+            }
+            Button {
+                text: "▼";
+                clicked => { root.pan-south(); }
+            }
+            Text {
+                text: "Drag chart to pan; scroll to zoom.";
+                wrap: word-wrap;
+                font-size: 10px;
+                color: #88aa99;
+            }
+
             Rectangle { vertical-stretch: 1; }
         }
 
@@ -119,6 +174,11 @@ export component ViewerWindow inherits Window {
                 font-size: 11px;
                 color: #88aa99;
             }
+            Text {
+                text: root.viewport-label;
+                font-size: 11px;
+                color: #88aa99;
+            }
 
             Rectangle {
                 horizontal-stretch: 1;
@@ -130,6 +190,29 @@ export component ViewerWindow inherits Window {
                 TouchArea {
                     width: 100%;
                     height: 100%;
+
+                    scroll-event(event) => {
+                        root.chart-zoom-wheel(event.delta-y);
+                        return accept;
+                    }
+
+                    pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down) {
+                            root.chart-pan-last-x = self.mouse-x;
+                            root.chart-pan-last-y = self.mouse-y;
+                        }
+                    }
+
+                    moved => {
+                        if (self.pressed) {
+                            root.chart-pan-pixel(
+                                self.mouse-x - root.chart-pan-last-x,
+                                self.mouse-y - root.chart-pan-last-y
+                            );
+                            root.chart-pan-last-x = self.mouse-x;
+                            root.chart-pan-last-y = self.mouse-y;
+                        }
+                    }
 
                     for seg in root.line-segments: Path {
                         width: 100%;

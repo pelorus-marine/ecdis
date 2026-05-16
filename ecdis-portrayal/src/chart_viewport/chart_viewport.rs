@@ -49,9 +49,21 @@ impl<P: PortrayalPipeline> ChartViewport<P> {
         chart: &S101Dataset,
         factor_mul: f64,
     ) -> Result<(), PortrayError> {
-        let raw = (f64::from(self.state.scale_denominator) * factor_mul).round();
-        let next = (raw.clamp(500.0, 50_000_000.0)) as u32;
+        let next = Self::scale_after_nudge(self.state.scale_denominator, factor_mul);
         self.set_scale_from_mariner(chart, next)
+    }
+
+    /// Adjust display scale without holding a separate borrow on the chart dataset.
+    pub fn nudge_scale_factor(&mut self, factor_mul: f64) -> Result<(), PortrayError> {
+        let next = Self::scale_after_nudge(self.state.scale_denominator, factor_mul);
+        self.portrayal.set_display_scale(next)?;
+        self.state.scale_denominator = next;
+        Ok(())
+    }
+
+    fn scale_after_nudge(current: u32, factor_mul: f64) -> u32 {
+        let raw = (f64::from(current) * factor_mul).round();
+        (raw.clamp(500.0, 50_000_000.0)) as u32
     }
 
     pub fn pan_deg(&mut self, dlon: f64, dlat: f64) {

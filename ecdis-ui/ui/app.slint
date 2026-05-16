@@ -4,6 +4,7 @@ import {
     ScrollView,
     VerticalBox,
 } from "std-widgets.slint";
+import { LicensePanel } from "license_dialog.slint";
 
 export struct StubSeg {
     x1: float,
@@ -46,6 +47,11 @@ export component AppWindow inherits Window {
     callback pan-south();
     callback chart-pan-pixel(dx: length, dy: length);
     callback chart-zoom-wheel(delta-y: length);
+    callback show-license();
+    callback close-license();
+
+    in-out property <bool> license-visible;
+    in-out property <string> license-notice-text;
 
     VerticalBox {
         padding: 12px;
@@ -128,6 +134,13 @@ export component AppWindow inherits Window {
                 text: "▼";
                 clicked => {
                     root.pan-south();
+                }
+            }
+
+            Button {
+                text: "About";
+                clicked => {
+                    root.show-license();
                 }
             }
         }
@@ -223,6 +236,32 @@ export component AppWindow inherits Window {
                 wrap: word-wrap;
                 font-size: 11px;
                 color: #aa6644;
+            }
+        }
+    }
+
+    if root.license-visible: Rectangle {
+        width: 100%;
+        height: 100%;
+        background: #00000099;
+        z: 1000;
+
+        TouchArea {
+            width: 100%;
+            height: 100%;
+            clicked => {
+                root.close-license();
+            }
+        }
+
+        LicensePanel {
+            width: min(520px, parent.width - 48px);
+            height: min(480px, parent.height - 48px);
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - self.height) / 2;
+            notice-text: root.license-notice-text;
+            close-dialog => {
+                root.close-license();
             }
         }
     }

@@ -1,7 +1,12 @@
 //! Slint **Wayland-capable** shell (`winit` backend): load ENC, [`ChartNavContext`], **C2IL** outlines.
 //!
+//! **Distribution:** shipped binaries link Slint and are offered under **GPL-3.0-only** (see
+//! [`DISTRIBUTION.md`](../DISTRIBUTION.md) and [`docs/shipping-licenses.md`](../../docs/shipping-licenses.md)).
+//!
 //! Slint-generated UI code may use `unsafe` internally; this crate does not add additional `unsafe`
 //! blocks in hand-written Rust.
+
+mod gpl_notice;
 
 slint::include_modules!();
 
@@ -308,6 +313,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let ui = AppWindow::new()?;
+    ui.set_license_notice_text(gpl_notice::license_notice_text().into());
+    ui.set_license_visible(false);
+    ui.on_show_license({
+        let ui_w = ui.as_weak();
+        move || {
+            if let Some(ui) = ui_w.upgrade() {
+                ui.set_license_visible(true);
+            }
+        }
+    });
+    ui.on_close_license({
+        let ui_w = ui.as_weak();
+        move || {
+            if let Some(ui) = ui_w.upgrade() {
+                ui.set_license_visible(false);
+            }
+        }
+    });
     refresh_panel(
         &ui,
         ctx.as_ref(),

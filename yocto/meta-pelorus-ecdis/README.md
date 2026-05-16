@@ -6,8 +6,9 @@ Companion **Yocto** layer for shipping [`ecdis-ui`](../../ecdis-ui/README.md) be
 
 1. Merge **this layer** into `BBLAYERS` (`bblayers.conf`).
 2. Enable **meta-rust** (or your Rust layer providing `inherit cargo`) and build **`ecdis-ui`** with [`ecdis-ui-cargo_0.0.1.bb`](recipes-ecdis/ecdis-ui/ecdis-ui-cargo_0.0.1.bb), **or** cross-compile on the host/SDK and install `/usr/bin/ecdis-ui` manually. Tune **`do_install`** source paths if your `cargo.bbclass` drops binaries elsewhere.
-3. Add **`ecdis-ui`** (cargo recipe) **`ecdis-ui-launcher`** to **`IMAGE_INSTALL`** so the binary (when built in-Yocto) and systemd/Weston stubs land on the rootfs.
-4. Align **Slint** licensing with product counsel before shipping firmware binaries.
+3. Add **`ecdis-ui`**, **`ecdis-ui-gpl-compliance`**, and **`ecdis-ui-launcher`** to **`IMAGE_INSTALL`** (Path A: GPL-3.0 distribution for the Slint binary — see [`docs/shipping-licenses.md`](../../docs/shipping-licenses.md)).
+4. Build a **source-offer** archive on the host (`./scripts/create-gpl-source-offer.sh <rev>`) and install it under `/usr/share/doc/ecdis-ui/` on the image.
+5. Set **`ECDIS_SOURCE_OFFER_URI`** in `/etc/default/ecdis-ui` (see `ecdis-ui.env.example`).
 
 ### SDK / aarch64 host build
 
@@ -31,6 +32,7 @@ Install the resulting `target/aarch64-unknown-linux-gnu/release/ecdis-ui` to **`
 |------|------|
 | [`ecdis-ui-launcher_1.0.bb`](recipes-ecdis/ecdis-ui/ecdis-ui-launcher_1.0.bb) | Ships systemd unit + `/etc/default` template + Weston notes (**does not compile Rust**). |
 | [`ecdis-ui-cargo_0.0.1.bb`](recipes-ecdis/ecdis-ui/ecdis-ui-cargo_0.0.1.bb) | **`inherit cargo`** recipe sketch — validate `do_install` paths against your meta-rust revision. |
+| [`ecdis-ui-gpl-compliance_0.0.1.bb`](recipes-ecdis/ecdis-ui/ecdis-ui-gpl-compliance_0.0.1.bb) | GPL-3.0 text, third-party notices, source-offer pointer under `/usr/share/doc/ecdis-ui/`. |
 | [`ecdis-ui-cargo.bb.EXAMPLE`](recipes-ecdis/ecdis-ui/ecdis-ui-cargo.bb.EXAMPLE) | Short commented fragment for layering into custom images. |
 | [`ecdis-ui.service`](recipes-ecdis/ecdis-ui/files/ecdis-ui.service) | systemd template — uses **`EnvironmentFile=-/etc/default/ecdis-ui`**. |
 | [`ecdis-ui.env.example`](recipes-ecdis/ecdis-ui/files/ecdis-ui.env.example) | Installs as **`/etc/default/ecdis-ui.example`** — copy to **`/etc/default/ecdis-ui`**. |

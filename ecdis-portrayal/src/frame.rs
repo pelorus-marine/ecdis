@@ -14,8 +14,9 @@ use crate::symbol_render;
 /// Gallery scenes exposed by the portrayal viewer.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ViewerScene {
+    /// ENC chart view: C2IL coastline outlines plus optional FC-resolved geometry.
     #[default]
-    C2ilOutline,
+    Chart,
     FeatureGraph,
     SymbolGallery,
     ThemeSwatches,
@@ -123,6 +124,27 @@ fn active_palette<'a>(
         .and_then(|b| b.catalogue.palette(inputs.display_mode.palette_name()))
 }
 
+/// ENC chart frame: **C2IL** coastline polylines only (same basis as [`ecdis-ui`](../ecdis-ui/)).
+///
+/// Full S-101 portrayal (symbols, area fills, rules) is not executed here. Use
+/// [`ViewerScene::FeatureGraph`] for FC-resolved geometry in the same projection when C2IL is present.
+pub fn build_chart_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFrame {
+    let mut frame = build_c2il_outline_frame(inputs);
+    let live = frame.layers.caption.starts_with("C2IL outline");
+    frame.layers.caption = if live {
+        format!(
+            "Chart — {}\nCoastline from ENC C2IL (not full portrayal catalogue). Feature geometry: Feature graph scene.",
+            frame.layers.caption
+        )
+    } else {
+        format!(
+            "Chart — {}\nTry IHO S-64 DisplayBase for real ENC outlines.",
+            frame.layers.caption
+        )
+    };
+    frame
+}
+
 /// C2IL outline segments (or demo stub when empty).
 pub fn build_c2il_outline_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFrame {
     let theme = ChartTheme::resolve(inputs.display_mode, active_palette(inputs));
@@ -138,7 +160,7 @@ pub fn build_c2il_outline_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFrame 
             x2,
             y2,
             stroke: theme.chart_stroke,
-            width_px: 2.0,
+            width_px: 1.5,
         })
         .collect::<Vec<_>>();
 
@@ -214,6 +236,7 @@ pub fn build_feature_graph_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFrame
         UI_CHART_VIEWBOX_WIDTH_PX,
         UI_CHART_VIEWBOX_HEIGHT_PX,
         &theme,
+        Some(inputs.outline),
     );
     PortrayalFrame::new(theme, layers)
 }
@@ -379,7 +402,7 @@ pub fn build_symbol_gallery_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFram
 /// Build the frame for the active gallery scene.
 pub fn build_frame(inputs: &PortrayalInputs<'_>, scene: ViewerScene) -> PortrayalFrame {
     match scene {
-        ViewerScene::C2ilOutline => build_c2il_outline_frame(inputs),
+        ViewerScene::Chart => build_chart_frame(inputs),
         ViewerScene::FeatureGraph => build_feature_graph_frame(inputs),
         ViewerScene::SymbolGallery => build_symbol_gallery_frame(inputs),
         ViewerScene::ThemeSwatches => build_theme_swatches_frame(inputs),

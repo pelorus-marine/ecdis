@@ -1,0 +1,14 @@
+Third-party licenses — ecdis-ui binary dependency closure
+=========================================================
+
+The distributed ecdis-ui executable statically links these crates (and Slint).
+The combined binary is offered under GPL-3.0-only when shipped on hardware; see
+../DISTRIBUTION.md and ../../docs/shipping-licenses.md.
+
+Regenerate this file before each firmware release:
+  ./scripts/generate-third-party-notices.sh
+
+Slint (https://slint.dev) — GPL-3.0-only OR Slint Royalty-free OR Slint Software
+(this product uses GPL-3.0-only for Slint).
+
+Below: other Rust crates pulled in by ecdis-ui (from cargo-license):

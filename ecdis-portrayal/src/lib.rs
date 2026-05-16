@@ -21,7 +21,9 @@ mod symbol_render;
 pub use catalogue_backed::{CatalogueBackedPortrayal, FeaturePortrayalDraft, PortrayalSetupError};
 pub use catalogue_loader::open_portrayal_catalogue_zip;
 #[cfg(feature = "s64")]
-pub use catalogue_loader::open_s101_portrayal_from_s64_zip;
+pub use catalogue_loader::{
+    open_s101_feature_catalogue_from_s64_zip, open_s101_portrayal_from_s64_zip,
+};
 pub use chart_theme::{ChartTheme, Rgb};
 pub use chart_viewport::{
     ChartViewport, ChartViewportState, UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX,
@@ -31,8 +33,8 @@ pub use cpu_outline::CpuOutlinePortrayal;
 pub use display_mode::DisplayMode;
 pub use frame::{
     ColorSwatch, FilledPolygon, LineSegment, PointMarker, PortrayalFrame, PortrayalInputs,
-    PortrayalLayers, SymbolSprite, ViewerScene, build_c2il_outline_frame, build_feature_graph_frame,
-    build_frame, build_symbol_gallery_frame, build_theme_swatches_frame,
+    PortrayalLayers, SymbolSprite, ViewerScene, build_chart_frame, build_c2il_outline_frame,
+    build_feature_graph_frame, build_frame, build_symbol_gallery_frame, build_theme_swatches_frame,
 };
 pub use portrayal::{NoPortrayal, PortrayError, PortrayalPipeline};
 

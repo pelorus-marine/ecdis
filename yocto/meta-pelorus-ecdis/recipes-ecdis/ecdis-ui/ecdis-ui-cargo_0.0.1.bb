@@ -1,10 +1,12 @@
 # Builds `ecdis-ui` with meta-rust `cargo` bbclass. Paths (`cargo.bbclass` revision,
 # ${WORKDIR}/build vs ${B}, cross-target triple) vary by Yocto release — validate with `bitbake -e`.
-SUMMARY = "Pelorus ECDIS Slint UI binary (Rust cargo)"
-LICENSE = "MIT | Apache-2.0"
+SUMMARY = "Pelorus ECDIS Slint UI binary (Rust cargo, GPL-3.0 distribution)"
+DESCRIPTION = "ecdis-ui links Slint under GPL-3.0-only (Path A). Install ecdis-ui-gpl-compliance for license texts and source-offer."
+LICENSE = "MIT | Apache-2.0 & GPL-3.0-only"
 LIC_FILES_CHKSUM = " \
-    file://${S}/LICENSE-MIT;md5=e1aa2d983f3785b02342740aabe5b7d9 \
-    file://${S}/LICENSE-APACHE;md5=f424aae774b9431ce9d3f5be7c7de503 \
+    file://${S}/ecdis-ui/LICENSE-MIT;md5=e1aa2d983f3785b02342740aabe5b7d9 \
+    file://${S}/ecdis-ui/LICENSE-APACHE;md5=f424aae774b9431ce9d3f5be7c7de503 \
+    file://${S}/ecdis-ui/licenses/GPL-3.0-only.txt;md5=8da5784ab1c72e63ac74971f88658166 \
 "
 
 inherit cargo
@@ -22,6 +24,7 @@ DEPENDS += "clang-native llvm-native pkgconfig-native"
 
 # Runtime: adjust Wayland/EGL/GPU package names for meta-imx / your BSP (e.g. imx-gpu-viv).
 RDEPENDS:${PN} += " \
+    ecdis-ui-gpl-compliance \
     wayland-client \
     libxkbcommon \
     fontconfig \

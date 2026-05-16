@@ -16,6 +16,8 @@ cargo run -p ecdis-ui --release -- /path/to/cell.000
 cargo run -p ecdis-ui --release -- /path/to/cell.000 /path/to/feature_catalogue.xml
 ```
 
+Use **About** in the UI for GPL-3.0 distribution notice and source-offer location.
+
 ### Own-ship demo inputs (env / CLI)
 
 Without overrides, the demo uses the same defaults as before (51°N 2°E, SOG from 3 m/s, HDG 42°, depth 8.5 m; COG unset). Set **`PELORUS_OWNSHIP_*`** environment variables and/or optional flags (after the `.000` / XML arguments) to drive [`OwnShipSnapshot`](../../platform/pelorus-core/src/ownship/snapshot.rs) through to the chart:
@@ -52,8 +54,20 @@ The HUD mirrors [`pelorus_adapter::ChartNavContext`](../../pelorus-adapter/) (**
 
 ## Licensing
 
-Rust crate sources are **MIT OR Apache-2.0** per crate `LICENSE-*` files. The **Slint** dependency adds its **own** license terms — audit **GPL / royalty-free** Slint licensing before shipping firmware binaries.
+| Artifact | License |
+|----------|---------|
+| **Source in git** (this crate’s Rust files) | **MIT OR Apache-2.0** (`LICENSE-MIT`, `LICENSE-APACHE`) |
+| **Distributed `ecdis-ui` binary** (links Slint) | **GPL-3.0-only** — [DISTRIBUTION.md](DISTRIBUTION.md) |
+
+Slint is used under **GPL-3.0-only** (Path A). Before shipping firmware:
+
+1. Read [docs/shipping-licenses.md](../docs/shipping-licenses.md)
+2. Run `./scripts/create-gpl-source-offer.sh <git-rev>`
+3. Run `./scripts/generate-third-party-notices.sh`
+4. Install compliance files on the image (`ecdis-ui-gpl-compliance` Yocto recipe)
+
+Override source-offer location: `ECDIS_SOURCE_OFFER_URI` (default `file:///usr/share/doc/ecdis-ui/source-offer.txt`).
 
 ## See also
 
-- Yocto skeleton layer: [`yocto/meta-pelorus-ecdis/`](../yocto/meta-pelorus-ecdis/README.md)
+- Yocto layer: [`yocto/meta-pelorus-ecdis/`](../yocto/meta-pelorus-ecdis/README.md)

@@ -79,7 +79,7 @@ fn frame_builders_smoke_without_catalogue() {
         outline: viewport.portrayal_ref(),
         selected_symbol_id: None,
     };
-    let frame = build_frame(&inputs, ViewerScene::C2ilOutline);
+    let frame = build_frame(&inputs, ViewerScene::Chart);
     assert!(frame.width_px > 0.0);
     let swatches = build_theme_swatches_frame(&inputs);
     assert!(!swatches.layers.swatches.is_empty());

@@ -9,7 +9,8 @@ use std::sync::{Arc, Mutex};
 
 use ecdis_portrayal::{
     ChartViewport, CpuOutlinePortrayal, DisplayMode, PortrayalFrame, PortrayalInputs, ViewerScene,
-    build_frame, open_portrayal_catalogue_zip, open_s101_portrayal_from_s64_zip,
+    build_frame, open_portrayal_catalogue_zip, open_s101_feature_catalogue_from_s64_zip,
+    open_s101_portrayal_from_s64_zip,
 };
 use s_101::{FeatureCatalogue, PortrayalCatalogueBundle, S101Dataset};
 use slint::ComponentHandle;
@@ -50,6 +51,7 @@ struct UiRefresh {
     frame: PortrayalFrame,
     scene_index: i32,
     catalogue_label: String,
+    viewport_label: String,
     symbol_ids: Vec<slint::SharedString>,
     symbol_index: i32,
 }
@@ -59,17 +61,47 @@ fn scene_from_index(i: i32) -> ViewerScene {
         1 => ViewerScene::FeatureGraph,
         2 => ViewerScene::SymbolGallery,
         3 => ViewerScene::ThemeSwatches,
-        _ => ViewerScene::C2ilOutline,
+        _ => ViewerScene::Chart,
     }
 }
 
 fn scene_to_index(scene: ViewerScene) -> i32 {
     match scene {
-        ViewerScene::C2ilOutline => 0,
+        ViewerScene::Chart => 0,
         ViewerScene::FeatureGraph => 1,
         ViewerScene::SymbolGallery => 2,
         ViewerScene::ThemeSwatches => 3,
     }
+}
+
+fn pixel_delta_to_deg(dx: f32, dy: f32, scale_denom: u32) -> (f64, f64) {
+    let z = (f64::from(scale_denom) / 22_000.0).clamp(0.25, 10.0);
+    let k = 0.00012 / z;
+    (-f64::from(dx) * k, f64::from(dy) * k)
+}
+
+fn s64_zip_path(cli: &ViewerCli) -> Option<PathBuf> {
+    cli.s64_zip.clone().or_else(|| {
+        let default = PathBuf::from("target/iho-cache/S-64_1.2.0.zip");
+        default.is_file().then_some(default)
+    })
+}
+
+fn load_feature_catalogue(
+    fc_path: Option<&PathBuf>,
+    cli: &ViewerCli,
+) -> Result<Option<FeatureCatalogue>, Box<dyn std::error::Error>> {
+    if let Some(p) = fc_path {
+        let bytes = std::fs::read(p)?;
+        return Ok(Some(FeatureCatalogue::parse_xml(&bytes)?));
+    }
+    if let Some(p) = s64_zip_path(cli) {
+        match open_s101_feature_catalogue_from_s64_zip(&p) {
+            Ok(fc) => return Ok(fc),
+            Err(e) => tracing::warn!("S-64 feature catalogue load failed: {e}"),
+        }
+    }
+    Ok(None)
 }
 
 fn parse_args() -> Result<(PathBuf, Option<PathBuf>, ViewerCli), Box<dyn std::error::Error>> {
@@ -165,11 +197,21 @@ fn build_ui_refresh(state: &ViewerState) -> UiRefresh {
         })
         .unwrap_or_default();
 
+    let vp = &state.viewport.state;
+    let viewport_label = format!(
+        "Viewport  centre λ={:.5}° φ={:.5}°  scale 1:{}  |  C2IL chains={}",
+        vp.center_lon_deg,
+        vp.center_lat_deg,
+        vp.scale_denominator,
+        state.viewport.portrayal_ref().chain_count(),
+    );
+
     UiRefresh {
         generation: 0,
         frame,
         scene_index: scene_to_index(state.scene),
         catalogue_label: catalogue_label(state.catalogue.as_ref(), state.display_mode),
+        viewport_label,
         symbol_ids,
         symbol_index: state.symbol_index as i32,
     }
@@ -179,6 +221,7 @@ fn apply_ui_refresh(ui: &ViewerWindow, update: UiRefresh) {
     apply_frame(ui, &update.frame);
     ui.set_scene_index(update.scene_index);
     ui.set_catalogue_label(update.catalogue_label.into());
+    ui.set_viewport_label(update.viewport_label.into());
     ui.set_symbol_ids(slint::ModelRc::new(slint::VecModel::from(update.symbol_ids)));
     ui.set_symbol_index(update.symbol_index);
 }
@@ -231,12 +274,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let (enc_path, fc_path, cli) = parse_args()?;
     let chart = S101Dataset::load(&enc_path)?;
-    let feature_catalogue = fc_path
-        .as_ref()
-        .map(|p| std::fs::read(p))
-        .transpose()?
-        .map(|b| FeatureCatalogue::parse_xml(&b))
-        .transpose()?;
+    let feature_catalogue = load_feature_catalogue(fc_path.as_ref(), &cli)?;
 
     let mut viewport = ChartViewport::new(CpuOutlinePortrayal::default());
     viewport.reset_chart(&chart)?;
@@ -249,7 +287,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         feature_catalogue,
         catalogue: None,
         viewport,
-        scene: ViewerScene::C2ilOutline,
+        scene: ViewerScene::Chart,
         display_mode: cli.display_mode,
         symbol_index: 0,
     }));
@@ -335,6 +373,82 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .unwrap_or(1);
                 st.symbol_index = (st.symbol_index + 1) % n;
             }
+            hook();
+        }
+    });
+
+    ui.on_chart_zoom_in({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move || {
+            let mut st = state_w.lock().unwrap();
+            let _ = st.viewport.nudge_scale_factor(1.0 / 1.25);
+            hook();
+        }
+    });
+    ui.on_chart_zoom_out({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move || {
+            let mut st = state_w.lock().unwrap();
+            let _ = st.viewport.nudge_scale_factor(1.25);
+            hook();
+        }
+    });
+    ui.on_chart_zoom_wheel({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move |delta_y| {
+            if delta_y == 0.0 {
+                return;
+            }
+            let factor = if delta_y < 0.0 { 1.0 / 1.12 } else { 1.12 };
+            let mut st = state_w.lock().unwrap();
+            let _ = st.viewport.nudge_scale_factor(factor);
+            hook();
+        }
+    });
+    ui.on_chart_pan_pixel({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move |dx, dy| {
+            let mut st = state_w.lock().unwrap();
+            let scale = st.viewport.state.scale_denominator;
+            let (dlon, dlat) = pixel_delta_to_deg(dx, dy, scale);
+            st.viewport.pan_deg(dlon, dlat);
+            hook();
+        }
+    });
+    let pan_step = 0.004;
+    ui.on_pan_north({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move || {
+            state_w.lock().unwrap().viewport.pan_deg(0.0, pan_step);
+            hook();
+        }
+    });
+    ui.on_pan_south({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move || {
+            state_w.lock().unwrap().viewport.pan_deg(0.0, -pan_step);
+            hook();
+        }
+    });
+    ui.on_pan_west({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move || {
+            state_w.lock().unwrap().viewport.pan_deg(-pan_step, 0.0);
+            hook();
+        }
+    });
+    ui.on_pan_east({
+        let state_w = state.clone();
+        let hook = Rc::clone(&hook);
+        move || {
+            state_w.lock().unwrap().viewport.pan_deg(pan_step, 0.0);
             hook();
         }
     });

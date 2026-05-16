@@ -5,6 +5,7 @@ use s_101::FeatureGraph;
 
 use crate::chart_theme::ChartTheme;
 use crate::chart_viewport::ChartViewportState;
+use crate::cpu_outline::CpuOutlinePortrayal;
 use crate::frame::{FilledPolygon, LineSegment, PointMarker, PortrayalLayers};
 
 const MAX_SEGMENTS: usize = 120_000;
@@ -17,12 +18,20 @@ struct PixelTx {
     h: f64,
 }
 
+enum Projector<'a> {
+    /// Same WGS84→pixel mapping as ENC **C2IL** chart outlines.
+    C2il(&'a CpuOutlinePortrayal),
+    /// Auto-fit to feature geometry (fallback when the cell has no C2IL chains).
+    Affine(PixelTx),
+}
+
 pub fn layers_from_graph(
     graph: &FeatureGraph<'_>,
     vp: &ChartViewportState,
     width_px: f32,
     height_px: f32,
     theme: &ChartTheme,
+    outline: Option<&CpuOutlinePortrayal>,
 ) -> PortrayalLayers {
     let mut samples = Vec::new();
     for f in &graph.features {
@@ -31,24 +40,32 @@ pub fn layers_from_graph(
         }
     }
 
-    let (mid_lat, mid_lon) = bbox_center(&samples).unwrap_or((vp.center_lat_deg, vp.center_lon_deg));
-    let mut frame_pts = samples;
-    if frame_pts.is_empty() {
-        frame_pts.push((mid_lat, mid_lon));
-    }
-
-    let Some(tx) = pixel_transform(&frame_pts, vp, width_px, height_px) else {
-        return PortrayalLayers {
-            caption: "Feature graph — could not derive pixel transform".to_string(),
-            ..Default::default()
+    let projector = if let Some(o) = outline.filter(|o| o.chain_count() > 0) {
+        Projector::C2il(o)
+    } else {
+        let mut frame_pts = samples.clone();
+        if frame_pts.is_empty() {
+            frame_pts.push((vp.center_lat_deg, vp.center_lon_deg));
+        }
+        let Some(tx) = pixel_transform(&frame_pts, vp, width_px, height_px) else {
+            return PortrayalLayers {
+                caption: "Feature graph — could not derive pixel transform".to_string(),
+                ..Default::default()
+            };
         };
+        Projector::Affine(tx)
+    };
+
+    let geo_count = graph.features.iter().filter(|f| !f.geometry.is_empty()).count();
+    let projection_note = match projector {
+        Projector::C2il(_) => "C2IL-aligned projection",
+        Projector::Affine(_) => "auto-fit to feature bbox (no C2IL in cell)",
     };
 
     let mut layers = PortrayalLayers {
         caption: format!(
-            "Feature graph — {} features ({} with geometry), scale 1:{}",
+            "Feature graph — {} features ({geo_count} with geometry), scale 1:{}, {projection_note}",
             graph.features.len(),
-            graph.features.iter().filter(|f| !f.geometry.is_empty()).count(),
             vp.scale_denominator
         ),
         ..Default::default()
@@ -63,7 +80,9 @@ pub fn layers_from_graph(
         }) = &f.geometry
         {
             if exterior.vertices.len() >= 2 && budget.take(exterior.vertices.len()) {
-                if let Some(verts) = polyline_verts(tx, vp, &exterior.vertices) {
+                if let Some(verts) =
+                    polyline_verts(&projector, vp, width_px, height_px, &exterior.vertices)
+                {
                     layers.polygons.push(FilledPolygon {
                         vertices: verts,
                         fill: theme.surface_fill,
@@ -74,7 +93,9 @@ pub fn layers_from_graph(
             }
             for ring in interiors {
                 if ring.vertices.len() >= 2 && budget.take(ring.vertices.len()) {
-                    if let Some(verts) = polyline_verts(tx, vp, &ring.vertices) {
+                    if let Some(verts) =
+                        polyline_verts(&projector, vp, width_px, height_px, &ring.vertices)
+                    {
                         layers.polygons.push(FilledPolygon {
                             vertices: verts,
                             fill: theme.background,
@@ -90,7 +111,7 @@ pub fn layers_from_graph(
     for f in &graph.features {
         if let Geometry::Curve(Curve2D { vertices }) = &f.geometry {
             if vertices.len() >= 2 && budget.take(vertices.len()) {
-                if let Some(verts) = polyline_verts(tx, vp, vertices) {
+                if let Some(verts) = polyline_verts(&projector, vp, width_px, height_px, vertices) {
                     for w in verts.windows(2) {
                         layers.segments.push(LineSegment {
                             x1: w[0].0,
@@ -98,7 +119,7 @@ pub fn layers_from_graph(
                             x2: w[1].0,
                             y2: w[1].1,
                             stroke: theme.chart_stroke,
-                            width_px: 1.8,
+                            width_px: 1.5,
                         });
                     }
                 }
@@ -109,25 +130,31 @@ pub fn layers_from_graph(
     for f in &graph.features {
         match &f.geometry {
             Geometry::Point(p) => {
-                let (x, y) = project(tx, vp, p.lat_deg, p.lon_deg);
-                layers.points.push(PointMarker {
-                    x,
-                    y,
-                    radius_px: 3.5,
-                    fill: theme.point_fill,
-                    stroke: theme.hud_primary,
-                });
-            }
-            Geometry::MultiPoint(MultiPoint2D(pts)) => {
-                for p in pts {
-                    let (x, y) = project(tx, vp, p.lat_deg, p.lon_deg);
+                if let Some((x, y)) =
+                    project_point(&projector, vp, width_px, height_px, p.lat_deg, p.lon_deg)
+                {
                     layers.points.push(PointMarker {
                         x,
                         y,
-                        radius_px: 2.0,
-                        fill: theme.heading,
+                        radius_px: 3.5,
+                        fill: theme.point_fill,
                         stroke: theme.hud_primary,
                     });
+                }
+            }
+            Geometry::MultiPoint(MultiPoint2D(pts)) => {
+                for p in pts {
+                    if let Some((x, y)) =
+                        project_point(&projector, vp, width_px, height_px, p.lat_deg, p.lon_deg)
+                    {
+                        layers.points.push(PointMarker {
+                            x,
+                            y,
+                            radius_px: 2.0,
+                            fill: theme.heading,
+                            stroke: theme.hud_primary,
+                        });
+                    }
                 }
             }
             _ => {}
@@ -135,6 +162,20 @@ pub fn layers_from_graph(
     }
 
     layers
+}
+
+fn project_point(
+    projector: &Projector<'_>,
+    vp: &ChartViewportState,
+    width_px: f32,
+    height_px: f32,
+    lat: f64,
+    lon: f64,
+) -> Option<(f32, f32)> {
+    match *projector {
+        Projector::C2il(outline) => outline.project_wgs84_to_screen_px(vp, lat, lon, width_px, height_px),
+        Projector::Affine(tx) => Some(affine_project(tx, vp, lat, lon)),
+    }
 }
 
 fn push_geometry_samples(g: &Geometry, out: &mut Vec<(f64, f64)>) {
@@ -161,23 +202,6 @@ fn push_geometry_samples(g: &Geometry, out: &mut Vec<(f64, f64)>) {
             }
         }
     }
-}
-
-fn bbox_center(samples: &[(f64, f64)]) -> Option<(f64, f64)> {
-    if samples.is_empty() {
-        return None;
-    }
-    let mut mn_lat = f64::MAX;
-    let mut mx_lat = f64::MIN;
-    let mut mn_lon = f64::MAX;
-    let mut mx_lon = f64::MIN;
-    for (lat, lon) in samples {
-        mn_lat = mn_lat.min(*lat);
-        mx_lat = mx_lat.max(*lat);
-        mn_lon = mn_lon.min(*lon);
-        mx_lon = mx_lon.max(*lon);
-    }
-    Some(((mn_lat + mx_lat) * 0.5, (mn_lon + mx_lon) * 0.5))
 }
 
 fn pixel_transform(
@@ -221,15 +245,17 @@ fn pixel_transform(
     })
 }
 
-fn project(t: PixelTx, vp: &ChartViewportState, lat: f64, lon: f64) -> (f32, f32) {
+fn affine_project(t: PixelTx, vp: &ChartViewportState, lat: f64, lon: f64) -> (f32, f32) {
     let x = ((lon - vp.center_lon_deg) * t.scale * t.cos_vp + t.w * 0.5) as f32;
     let y = (t.h * 0.5 - (lat - vp.center_lat_deg) * t.scale) as f32;
     (x, y)
 }
 
 fn polyline_verts(
-    t: PixelTx,
+    projector: &Projector<'_>,
     vp: &ChartViewportState,
+    width_px: f32,
+    height_px: f32,
     verts: &[Point2D],
 ) -> Option<Vec<(f32, f32)>> {
     if verts.len() < 2 {
@@ -238,7 +264,9 @@ fn polyline_verts(
     Some(
         verts
             .iter()
-            .map(|v| project(t, vp, v.lat_deg, v.lon_deg))
+            .filter_map(|v| {
+                project_point(projector, vp, width_px, height_px, v.lat_deg, v.lon_deg)
+            })
             .collect(),
     )
 }

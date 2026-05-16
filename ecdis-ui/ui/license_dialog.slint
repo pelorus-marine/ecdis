@@ -1,0 +1,37 @@
+import { Button, ScrollView, VerticalBox } from "std-widgets.slint";
+import { AboutSlint } from "std-widgets.slint";
+
+export component LicensePanel inherits Rectangle {
+    in-out property <string> notice-text;
+    callback close-dialog();
+
+    background: #1a222cee;
+    border-width: 1px;
+    border-color: #556677;
+
+    VerticalBox {
+        padding: 12px;
+        spacing: 8px;
+
+        AboutSlint {
+            preferred-height: 120px;
+        }
+
+        ScrollView {
+            vertical-stretch: 1;
+            Text {
+                text: root.notice-text;
+                wrap: word-wrap;
+                font-size: 11px;
+                color: #ccddee;
+            }
+        }
+
+        Button {
+            text: "Close";
+            clicked => {
+                root.close-dialog();
+            }
+        }
+    }
+}

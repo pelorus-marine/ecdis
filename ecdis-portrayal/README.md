@@ -16,7 +16,7 @@ cargo test -p ecdis-portrayal --features symbols,s64
 Public API highlights:
 
 - [`DisplayMode`](src/display_mode.rs), [`ChartTheme`](src/chart_theme.rs)
-- [`PortrayalFrame`](src/frame.rs) + `build_*_frame`
+- [`PortrayalFrame`](src/frame.rs) + `build_*_frame` (including [`build_chart_frame`](src/frame.rs) for ENC C2IL + FC overlay)
 - [`PortrayalCatalogueBundle`](../iho/s-101/) via `s-101` (zip SVG / `*SvgStyle.css` reads)
 - [`PortrayalPipeline`](src/portrayal/portrayal_pipeline.rs)
 
