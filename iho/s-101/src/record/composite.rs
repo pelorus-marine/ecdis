@@ -1,14 +1,8 @@
 //! **CCID** + **CUCO** — composite curve records.
 
 use crate::binary::{read_u8, read_u32_le, trim_field_term};
+use crate::record::cuco_ref::CucoRef;
 use crate::record::identifier::RecordIdentifier;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct CucoRef {
-    pub rrn: u8,
-    pub rrid: u32,
-    pub orientation: u8,
-}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CompositeCurveRecord {

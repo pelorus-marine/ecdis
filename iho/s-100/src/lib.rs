@@ -9,15 +9,14 @@
 
 #![forbid(unsafe_code)]
 
+mod framework_stub;
+
 pub mod feature_id;
 pub mod geometry;
 
 pub use feature_id::FeatureObjectId;
+pub use framework_stub::FrameworkStub;
 pub use geometry::{Curve2D, Geometry, MultiPoint2D, Point2D, Surface2D};
-
-/// Marker type retained for early workspace wiring; prefer concrete types in this crate.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct FrameworkStub;
 
 #[cfg(test)]
 mod tests {

@@ -9,9 +9,9 @@
 
 #![forbid(unsafe_code)]
 
-/// Placeholder until S-103 subsurface navigation types are modeled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct SubsurfaceNavigationStub;
+mod subsurface_navigation_stub;
+
+pub use subsurface_navigation_stub::SubsurfaceNavigationStub;
 
 #[cfg(test)]
 mod tests {

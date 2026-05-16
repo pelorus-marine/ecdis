@@ -2,39 +2,18 @@
 //!
 //! Alarm semantics here are **non-certifying** stubs — formal IMO/IEC evidence belongs in
 //! dedicated validation programs.
+//!
+//! Each public type lives in its own file; this `lib.rs` is just the namespace assembly point.
 
 #![forbid(unsafe_code)]
 
-/// Categories of navigation alerts surfaced toward UI/log sinks.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum NavAlertKind {
-    Overscale,
-    RouteDeviation,
-}
+mod alarm_sink;
+mod nav_alert_kind;
+mod stderr_alarm_sink;
 
-impl std::fmt::Display for NavAlertKind {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Overscale => write!(f, "overscale"),
-            Self::RouteDeviation => write!(f, "route_deviation"),
-        }
-    }
-}
-
-/// Consumes navigation alerts (bridge UI, logging, Stream publishers, …).
-pub trait AlarmSink {
-    fn emit(&mut self, kind: NavAlertKind, message: &str);
-}
-
-/// Writes alarms to **stderr** — useful for demos and CLI composition roots.
-#[derive(Debug, Default, Clone, Copy)]
-pub struct StderrAlarmSink;
-
-impl AlarmSink for StderrAlarmSink {
-    fn emit(&mut self, kind: NavAlertKind, message: &str) {
-        eprintln!("nav-alert [{kind}]: {message}");
-    }
-}
+pub use alarm_sink::AlarmSink;
+pub use nav_alert_kind::NavAlertKind;
+pub use stderr_alarm_sink::StderrAlarmSink;
 
 /// Returns **true** when the chart cell’s **minimum display scale** (SCAMIN-style numerator)
 /// is **smaller** than the mariner-selected display scale — i.e. the ENC requests a larger-scale

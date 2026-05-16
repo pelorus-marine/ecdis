@@ -4,9 +4,9 @@
 
 #![forbid(unsafe_code)]
 
-/// Placeholder until S-124 warning records and geometry are modeled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct NavigationalWarningsStub;
+mod navigational_warnings_stub;
+
+pub use navigational_warnings_stub::NavigationalWarningsStub;
 
 #[cfg(test)]
 mod tests {

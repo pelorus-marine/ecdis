@@ -3,6 +3,7 @@
 mod attribute;
 mod composite;
 mod crs;
+mod cuco_ref;
 mod curve;
 mod dataset;
 mod feature;
@@ -11,13 +12,16 @@ mod frid;
 mod identifier;
 mod mrid;
 mod point;
+mod ptas_ref;
+mod rias_ref;
 mod spatial_ref;
 mod surface;
 
 pub use attribute::{RawAttributeTuple, parse_attr_tuples};
-pub use composite::{CompositeCurveRecord, CucoRef};
+pub use composite::CompositeCurveRecord;
 pub use crs::CoordinateSystemRecord;
-pub use curve::{CurveRecord, PtasRef};
+pub use cuco_ref::CucoRef;
+pub use curve::CurveRecord;
 pub use dataset::DatasetDescriptionRecord;
 pub use feature::FeatureRecord;
 pub use foid::parse_foid;
@@ -26,7 +30,8 @@ pub use identifier::RecordIdentifier;
 pub use mrid::MridRecord;
 pub use point::PointRecord;
 pub use spatial_ref::SpasRef;
-pub use surface::{RiasRef, SurfaceRecord};
+pub use rias_ref::RiasRef;
+pub use surface::SurfaceRecord;
 
 use iso8211::dr::DataRecord;
 

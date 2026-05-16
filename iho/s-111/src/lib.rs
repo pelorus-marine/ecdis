@@ -4,9 +4,9 @@
 
 #![forbid(unsafe_code)]
 
-/// Placeholder until S-111 vector / grid current model is implemented.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct SurfaceCurrentsStub;
+mod surface_currents_stub;
+
+pub use surface_currents_stub::SurfaceCurrentsStub;
 
 #[cfg(test)]
 mod tests {

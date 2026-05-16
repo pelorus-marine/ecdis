@@ -8,9 +8,9 @@
 
 #![forbid(unsafe_code)]
 
-/// Placeholder until S-104 physical environment types are modeled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct PhysicalEnvironmentStub;
+mod physical_environment_stub;
+
+pub use physical_environment_stub::PhysicalEnvironmentStub;
 
 #[cfg(test)]
 mod tests {

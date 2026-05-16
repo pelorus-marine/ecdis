@@ -2,13 +2,7 @@
 
 use crate::binary::{read_i32_le, read_u8, read_u32_le, trim_field_term};
 use crate::record::identifier::RecordIdentifier;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PtasRef {
-    pub rrn: u8,
-    pub rrid: u32,
-    pub topi: u8,
-}
+use crate::record::ptas_ref::PtasRef;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct CurveRecord {

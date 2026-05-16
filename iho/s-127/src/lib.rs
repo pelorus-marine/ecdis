@@ -4,9 +4,9 @@
 
 #![forbid(unsafe_code)]
 
-/// Placeholder until S-127 MPA features are modeled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct MarineProtectedAreasStub;
+mod marine_protected_areas_stub;
+
+pub use marine_protected_areas_stub::MarineProtectedAreasStub;
 
 #[cfg(test)]
 mod tests {

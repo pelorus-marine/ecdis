@@ -5,9 +5,9 @@
 
 #![forbid(unsafe_code)]
 
-/// Placeholder until S-129 UKC management types are modeled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct UnderKeelClearanceStub;
+mod under_keel_clearance_stub;
+
+pub use under_keel_clearance_stub::UnderKeelClearanceStub;
 
 #[cfg(test)]
 mod tests {
