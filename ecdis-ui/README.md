@@ -2,6 +2,8 @@
 
 **Slint** shell binary for loading **S-101** ENC `.000` cells and exercising [`ecdis-portrayal`](../ecdis-portrayal/) viewport hooks plus [`ecdis-behaviours`](../ecdis-behaviours/) alarm sinks.
 
+For portrayal-only debugging (display modes, symbol gallery, theme swatches), use the dev-only gallery: `cargo run -p ecdis-portrayal-viewer` — see [`ecdis-portrayal-viewer/README.md`](../ecdis-portrayal-viewer/README.md).
+
 Chart geometry uses a fixed **880×420** logical viewbox (scaled to the chart rectangle): ENC **C2IL** polylines render as blue strokes; **demo stub** appears when the cell has no decodable chains. An **orange cross** marks own-ship when latitude/longitude fall inside the canvas (same projection as outlines).
 
 ### Run (developer workstation)

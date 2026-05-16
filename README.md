@@ -18,7 +18,8 @@ ecdis/
   testdata/          # optional s101_sample.000 — see testdata/README.md
   iso8211/
   pelorus-adapter/   # S-101 + own-ship / AIS + Core mapper traits (no CAN stack in-crate)
-  ecdis-ui/          # Slint Wayland ENC HUD — see ecdis-ui/README.md
+  ecdis-ui/                  # Slint Wayland ENC HUD — see ecdis-ui/README.md
+  ecdis-portrayal-viewer/    # Dev-only portrayal gallery (Slint)
   yocto/             # Companion BitBake stubs — see yocto/meta-pelorus-ecdis/README.md
   iho/               # IHO S-* product crates (s-101 = ENC, s-164 = test corpora, …)
 ```
@@ -50,6 +51,9 @@ cargo run -p iso8211 --example print -- path/to/file.000
 
 # Example: Slint ENC HUD (Wayland/X11 session + dev libs — see ecdis-ui/README.md)
 cargo run -p ecdis-ui --release -- path/to/cell.000
+
+# Dev-only portrayal gallery (Slint — see ecdis-portrayal-viewer/README.md)
+cargo run -p ecdis-portrayal-viewer -- path/to/cell.000
 ```
 
 ## Crate index
@@ -68,7 +72,8 @@ Workspace members from [`Cargo.toml`](Cargo.toml). Each row links the crate dire
 | Crate | Description |
 |-------|-------------|
 | [ecdis-behaviours](ecdis-behaviours/) | ECDIS behaviour stubs (overscale, alarms) — IMO logic incremental. |
-| [ecdis-portrayal](ecdis-portrayal/) | Portrayal pipeline traits for S-101 charts (AML integration stub). |
+| [ecdis-portrayal](ecdis-portrayal/) | Portrayal library (display modes, frames; no UI). |
+| [ecdis-portrayal-viewer](ecdis-portrayal-viewer/) | **Dev-only** Slint gallery for portrayal debugging. |
 | [ecdis-runtime](ecdis-runtime/) | Composition-root demo: ENC load + `ChartNavContext` + portrayal/behaviour stubs. |
 | [ecdis-ui](ecdis-ui/) | Slint Wayland UI shell for ENC load + `ChartNavContext` (IVI-style demo). |
 

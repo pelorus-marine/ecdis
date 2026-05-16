@@ -4,15 +4,27 @@ version = "0.0.1"
 edition = "2024"
 rust-version = "1.90.0"
 authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
-description = "Portrayal pipeline traits for S-101 charts (AML integration stub)."
+description = "Portrayal pipeline and frame-building API for S-101 ECDIS charts."
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/pelorus-marine/ecdis"
 publish = false
 
+[lib]
+path = "src/lib.rs"
+
+[features]
+default = []
+symbols = ["dep:resvg", "dep:usvg", "dep:tiny-skia"]
+s64 = ["dep:s-164"]
+
 [dependencies]
 s-100 = { workspace = true }
 s-101 = { workspace = true }
+resvg = { workspace = true, optional = true }
+usvg = { workspace = true, optional = true }
+tiny-skia = { workspace = true, optional = true }
+s-164 = { workspace = true, optional = true }
 
 [dev-dependencies]
 s-164 = { workspace = true }

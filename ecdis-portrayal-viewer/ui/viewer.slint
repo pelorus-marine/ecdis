@@ -1,0 +1,204 @@
+import { Button, HorizontalBox, VerticalBox } from "std-widgets.slint";
+
+export struct LineSeg {
+    x1: float,
+    y1: float,
+    x2: float,
+    y2: float,
+    color: brush,
+    width: float,
+}
+
+export struct SwatchItem {
+    token: string,
+    x: float,
+    y: float,
+    size: float,
+    color: brush,
+}
+
+export struct PointItem {
+    x: float,
+    y: float,
+    radius: float,
+    fill: brush,
+    stroke: brush,
+}
+
+export component ViewerWindow inherits Window {
+    preferred-width: 1100px;
+    preferred-height: 720px;
+    title: "ECDIS portrayal viewer";
+
+    in-out property <string> enc-label;
+    in-out property <string> catalogue-label;
+    in-out property <string> caption-label;
+    in-out property <int> scene-index;
+    in-out property <brush> chart-background;
+    in-out property <[LineSeg]> line-segments;
+    in-out property <[SwatchItem]> swatches;
+    in-out property <[PointItem]> points;
+    in-out property <image> symbol-image;
+    in-out property <bool> symbol-visible;
+    in-out property <float> symbol-x;
+    in-out property <float> symbol-y;
+    in-out property <string> symbol-id-label;
+    in-out property <[string]> symbol-ids;
+    in-out property <int> symbol-index;
+
+    callback scene-selected(int);
+    callback display-day();
+    callback display-dusk();
+    callback display-night();
+    callback symbol-prev();
+    callback symbol-next();
+
+    HorizontalBox {
+        padding: 8px;
+        spacing: 8px;
+
+        VerticalBox {
+            width: 200px;
+            spacing: 4px;
+
+            Text {
+                text: "Scenes";
+                font-weight: 700;
+            }
+
+            Button {
+                text: "C2IL outline";
+                clicked => { root.scene-selected(0); }
+            }
+            Button {
+                text: "Feature graph";
+                clicked => { root.scene-selected(1); }
+            }
+            Button {
+                text: "Symbol gallery";
+                clicked => { root.scene-selected(2); }
+            }
+            Button {
+                text: "Theme swatches";
+                clicked => { root.scene-selected(3); }
+            }
+
+            Rectangle { height: 8px; }
+
+            Text {
+                text: "Display mode";
+                font-weight: 700;
+            }
+            Button {
+                text: "Day";
+                clicked => { root.display-day(); }
+            }
+            Button {
+                text: "Dusk";
+                clicked => { root.display-dusk(); }
+            }
+            Button {
+                text: "Night";
+                clicked => { root.display-night(); }
+            }
+
+            Rectangle { vertical-stretch: 1; }
+        }
+
+        VerticalBox {
+            horizontal-stretch: 1;
+            spacing: 6px;
+
+            Text {
+                text: root.enc-label;
+                wrap: word-wrap;
+                font-size: 12px;
+            }
+            Text {
+                text: root.catalogue-label;
+                font-size: 11px;
+                color: #88aa99;
+            }
+
+            Rectangle {
+                horizontal-stretch: 1;
+                vertical-stretch: 1;
+                border-width: 1px;
+                border-color: #444444;
+                background: root.chart-background;
+
+                TouchArea {
+                    width: 100%;
+                    height: 100%;
+
+                    for seg in root.line-segments: Path {
+                        width: 100%;
+                        height: 100%;
+                        viewbox-width: 880px / 1px;
+                        viewbox-height: 420px / 1px;
+                        commands: "M \{seg.x1} \{seg.y1} L \{seg.x2} \{seg.y2}";
+                        stroke-width: seg.width * 1px;
+                        stroke: seg.color;
+                        fill: transparent;
+                    }
+
+                    for sw in root.swatches: Rectangle {
+                        x: sw.x * 1px;
+                        y: sw.y * 1px;
+                        width: sw.size * 1px;
+                        height: sw.size * 1px;
+                        background: sw.color;
+                        border-width: 1px;
+                        border-color: #333333;
+                    }
+
+                    for pt in root.points: Rectangle {
+                        x: (pt.x - pt.radius) * 1px;
+                        y: (pt.y - pt.radius) * 1px;
+                        width: pt.radius * 2 * 1px;
+                        height: pt.radius * 2 * 1px;
+                        border-radius: pt.radius * 1px;
+                        background: pt.fill;
+                        border-width: 1px;
+                        border-color: pt.stroke;
+                    }
+
+                    if root.symbol-visible: Image {
+                        source: root.symbol-image;
+                        x: root.symbol-x * 1px;
+                        y: root.symbol-y * 1px;
+                        width: root.symbol-image.width * 1px;
+                        height: root.symbol-image.height * 1px;
+                    }
+
+                    Text {
+                        x: 10px;
+                        y: 8px;
+                        width: parent.width - 20px;
+                        text: root.caption-label;
+                        wrap: word-wrap;
+                        font-size: 11px;
+                        color: #ccddee;
+                    }
+                }
+            }
+
+            if root.scene-index == 2: HorizontalBox {
+                spacing: 6px;
+                Button {
+                    text: "◀ sym";
+                    clicked => { root.symbol-prev(); }
+                }
+                Text {
+                    text: root.symbol-id-label;
+                    horizontal-stretch: 1;
+                    font-size: 12px;
+                }
+                Button {
+                    text: "sym ▶";
+                    clicked => { root.symbol-next(); }
+                }
+            }
+        }
+    }
+}

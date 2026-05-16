@@ -1,34 +1,37 @@
 # ecdis-portrayal
 
-Stub **[`PortrayalPipeline`](src/lib.rs)** for S-101 charts — AML / symbol libraries **not** included yet.
+**Portrayal library** for S-101 ECDIS stacks: pipeline traits, display modes (Day / Dusk / Night), catalogue-backed colour tokens, and UI-agnostic [`PortrayalFrame`](src/frame.rs) builders.
 
-## Quick visualization (SVG)
+This crate has **no Slint dependency**. For a developer gallery UI, use the separate [`ecdis-portrayal-viewer`](../ecdis-portrayal-viewer/) crate (not used in production images). Full IVI integration remains in [`ecdis-ui`](../ecdis-ui/).
 
-From an ENC `.000` and matching **S-101 feature catalogue** XML, render **`s_101::FeatureGraph`**
-geometry (same 880×420 viewbox as `ecdis-ui`). **Use real paths** — `path/to/...` below is only a shape hint:
+## Library
 
-```text
-cargo run -p ecdis-portrayal --example feature_graph_preview_svg -- \
-  /path/to/cell.000 /path/to/S-101_FC.xml out.svg
+```bash
+cargo build -p ecdis-portrayal
+cargo test -p ecdis-portrayal
+# Optional feature tests (catalogue / symbols):
+cargo test -p ecdis-portrayal --features symbols,s64
 ```
 
-After you have cached **S-64** (`Corpus::fetch_default` or manual download), you can extract inputs and run:
+Public API highlights:
 
-```text
-unzip -p ~/.cache/pelorus-marine/s-164/S-64_1.2.0.zip \
-  'S-100/DisplayStandard/S100_ROOT/S-101/DATASET_FILES/10100AA_STNDR.000' > /tmp/stndr.000
-unzip -p ~/.cache/pelorus-marine/s-164/S-64_1.2.0.zip \
-  'S-100/InitialCatalogues/S100_ROOT/S-101/CATALOGUES/S-101_1.0.2_20220524.xml' > /tmp/s101_fc.xml
-cargo run -p ecdis-portrayal --example feature_graph_preview_svg -- \
-  /tmp/stndr.000 /tmp/s101_fc.xml /tmp/graph.svg
-```
+- [`DisplayMode`](src/display_mode.rs), [`ChartTheme`](src/chart_theme.rs)
+- [`PortrayalFrame`](src/frame.rs) + `build_*_frame`
+- [`PortrayalCatalogueBundle`](../iho/s-101/) via `s-101` (zip SVG / `*SvgStyle.css` reads)
+- [`PortrayalPipeline`](src/portrayal/portrayal_pipeline.rs)
 
-Optional 4th argument: scale denominator (default `22000`). Open `out.svg` in a browser.
+## Feature flags
 
-**C2IL-only** outline (no FC file):
+| Feature | Enables |
+|---------|---------|
+| `symbols` | `resvg` symbol rasterization in frame builders |
+| `s64` | Load portrayal catalogue from IHO S-64 zip |
 
-```text
-cargo run -p ecdis-portrayal --example chart_preview_svg -- /path/to/cell.000 out.svg
+## SVG examples (headless)
+
+```bash
+cargo run -p ecdis-portrayal --example chart_preview_svg -- path/to/cell.000 out.svg
+cargo run -p ecdis-portrayal --example feature_graph_preview_svg -- path/to/cell.000 path/to/S-101_FC.xml out.svg
 ```
 
 ## License

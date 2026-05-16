@@ -1,0 +1,26 @@
+[package]
+name = "ecdis-portrayal-viewer"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.90.0"
+authors = ["Pelorus Marine contributors <https://github.com/pelorus-marine>"]
+description = "Developer-only Slint gallery for ecdis-portrayal frame builders (not for production images)."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/pelorus-marine/ecdis"
+publish = false
+build = "build.rs"
+
+[[bin]]
+name = "ecdis-portrayal-viewer"
+path = "src/main.rs"
+
+[dependencies]
+ecdis-portrayal = { path = "../ecdis-portrayal", features = ["symbols", "s64"] }
+s-101 = { workspace = true }
+slint = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[build-dependencies]
+slint-build = { workspace = true }

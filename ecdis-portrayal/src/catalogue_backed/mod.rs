@@ -18,6 +18,7 @@ mod portrayal_setup_error;
 pub use feature_portrayal_draft::FeaturePortrayalDraft;
 pub use portrayal_setup_error::PortrayalSetupError;
 
+use crate::display_mode::DisplayMode;
 use crate::portrayal::{PortrayError, PortrayalPipeline};
 
 /// Pipeline that resolves features through a loaded [`PortrayalCatalogue`].
@@ -72,6 +73,25 @@ impl CatalogueBackedPortrayal {
     #[must_use]
     pub fn palette_name(&self) -> &str {
         &self.palette_name
+    }
+
+    /// Palette names from `colorProfile.xml` when a colour profile is present.
+    pub fn available_palette_names(&self) -> Vec<&str> {
+        self.catalogue
+            .color_profile
+            .as_ref()
+            .map(|cp| cp.palettes.iter().map(|p| p.name.as_str()).collect())
+            .unwrap_or_default()
+    }
+
+    /// Switch display mode (validates palette exists when a colour profile is loaded).
+    pub fn set_display_mode(&mut self, mode: DisplayMode) -> Result<(), PortrayalSetupError> {
+        let name = mode.palette_name();
+        if self.catalogue.palette(name).is_none() && self.catalogue.color_profile.is_some() {
+            return Err(PortrayalSetupError::UnknownPalette(name.to_string()));
+        }
+        self.palette_name = name.to_string();
+        Ok(())
     }
 
     #[must_use]

@@ -28,4 +28,13 @@ pub enum PortrayalCatalogueError {
 
     #[error("color profile XML is not valid UTF-8")]
     ColorProfileNotUtf8,
+
+    #[error("missing asset in bundle: {0}")]
+    MissingAsset(String),
+
+    #[error("unknown symbol id: {0}")]
+    UnknownSymbol(String),
+
+    #[error("palette has no css attribute")]
+    PaletteHasNoStylesheet,
 }

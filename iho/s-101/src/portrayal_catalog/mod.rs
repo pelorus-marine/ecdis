@@ -20,6 +20,7 @@ mod color_token_decl;
 mod error;
 mod named_asset;
 mod portrayal_catalogue;
+mod portrayal_catalogue_bundle;
 mod portrayal_catalogue_manifest;
 mod rule_asset;
 mod xml_util;
@@ -31,6 +32,9 @@ pub use color_token_decl::ColorTokenDecl;
 pub use error::PortrayalCatalogueError;
 pub use named_asset::NamedAsset;
 pub use portrayal_catalogue::PortrayalCatalogue;
+pub use portrayal_catalogue_bundle::{
+    PortrayalCatalogueBundle, stylesheet_from_palette,
+};
 pub use portrayal_catalogue_manifest::{PortrayalCatalogueManifest, parse_manifest_xml};
 pub use rule_asset::RuleAsset;
 

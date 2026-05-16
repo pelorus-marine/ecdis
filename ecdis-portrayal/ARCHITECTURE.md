@@ -2,9 +2,11 @@
 
 ## Purpose
 
-Define **[`PortrayalPipeline`](src/lib.rs)** hooks binding [`s_101::S101Dataset`](../iho/s-101/) to future AML/portrayal engines, plus **[`ChartViewport`](src/chart_viewport.rs)** for mariner pan/zoom state tied to scale denominators.
+**Library-only** portrayal for S-101: [`PortrayalPipeline`](src/portrayal/portrayal_pipeline.rs), [`PortrayalFrame`](src/frame.rs) builders, [`DisplayMode`](src/display_mode.rs) / [`ChartTheme`](src/chart_theme.rs).
+
+Developer Slint gallery: separate [`ecdis-portrayal-viewer`](../ecdis-portrayal-viewer/) crate (not part of this library).
 
 ## Boundaries
 
-- **In scope:** trait surface + [`NoPortrayal`](src/lib.rs) stub; [`demo_stub_segments_px`](src/chart_viewport.rs) UI stubs (non-navigation-grade projection).
-- **Out of scope:** S-100 AML execution, GPU contexts, symbol catalogs — application-owned.
+- **In scope:** C2IL outline CPU portrayal; catalogue palette + CSS asset reads (via [`s_101::PortrayalCatalogueBundle`](../iho/s-101/)); feature-graph geometry frames; optional symbol rasterization (`symbols` feature).
+- **Out of scope:** Slint / Wayland UI; Lua AML rule execution; certified ECDIS HMI — [`ecdis-ui`](../ecdis-ui/) owns the IVI shell.

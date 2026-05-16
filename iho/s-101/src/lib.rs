@@ -42,7 +42,8 @@ pub use geometry::{IntegerCrsParameters, extract_c2il_polylines_wgs84};
 pub use graph::{AttributeValue, Feature, FeatureGraph, ResolvedAttribute};
 pub use portrayal_catalog::{
     ColorPalette, ColorPaletteItem, ColorProfile, ColorTokenDecl, NamedAsset, PortrayalCatalogue,
-    PortrayalCatalogueError, PortrayalCatalogueManifest, RuleAsset,
+    PortrayalCatalogueBundle, PortrayalCatalogueError, PortrayalCatalogueManifest, RuleAsset,
+    stylesheet_from_palette,
 };
 pub use s_100::{Curve2D, FeatureObjectId, Geometry, MultiPoint2D, Point2D, Surface2D};
 pub use semantic::{FeatureCataloguePin, FeatureInventorySummary, RawFeatureRecordRef};

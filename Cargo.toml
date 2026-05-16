@@ -3,6 +3,39 @@ resolver = "2"
 members = [
     "ecdis-behaviours",
     "ecdis-portrayal",
+    "ecdis-portrayal-viewer",
+    "ecdis-runtime",
+    "ecdis-ui",
+    "iso8211",
+    "pelorus-adapter",
+    "iho/s-100",
+    "iho/s-101",
+    "iho/s-102",
+    "iho/s-103",
+    "iho/s-104",
+    "iho/s-111",
+    "iho/s-112",
+    "iho/s-121",
+    "iho/s-122",
+    "iho/s-123",
+    "iho/s-124",
+    "iho/s-125",
+    "iho/s-126",
+    "iho/s-127",
+    "iho/s-128",
+    "iho/s-129",
+    "iho/s-130",
+    "iho/s-131",
+    "iho/s-164",
+    "iho/s-61",
+    "iho/s-97",
+    "iho/s-98",
+    "iho/s-99",
+]
+# Default `cargo build` / `cargo test` at the workspace root omit dev-only tools.
+default-members = [
+    "ecdis-behaviours",
+    "ecdis-portrayal",
     "ecdis-runtime",
     "ecdis-ui",
     "iso8211",
@@ -39,12 +72,25 @@ members = [
 roxmltree = "0.21"
 thiserror = "2.0"
 zip = { version = "8.6", default-features = false, features = ["deflate"] }
+slint = { version = "1.16.1", default-features = false, features = [
+    "std",
+    "compat-1-2",
+    "backend-winit",
+    "renderer-femtovg",
+] }
+slint-build = "1.16.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+resvg = "0.47"
+usvg = "0.47"
+tiny-skia = "0.12"
 # workspace path crates (shared)
 s-100 = { version = "0.0.1", path = "iho/s-100" }
 s-101 = { version = "0.0.1", path = "iho/s-101" }
 s-164 = { path = "iho/s-164" }
 ecdis-behaviours = { path = "ecdis-behaviours" }
 ecdis-portrayal = { path = "ecdis-portrayal" }
+ecdis-portrayal-viewer = { path = "ecdis-portrayal-viewer" }
 pelorus-adapter = { path = "pelorus-adapter" }
 
 [profile.release]
