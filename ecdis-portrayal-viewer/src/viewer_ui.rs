@@ -5,7 +5,7 @@ slint::include_modules!();
 use ecdis_portrayal::PortrayalFrame;
 
 pub fn apply_frame(ui: &ViewerWindow, frame: &PortrayalFrame) {
-    ui.set_chart_background(parse_brush(&frame.theme.background.to_hex()).into());
+    ui.set_chart_background(parse_brush(&frame.theme.background.to_hex()));
     ui.set_caption_label(frame.layers.caption.clone().into());
 
     let mut segments: Vec<LineSeg> = frame
@@ -17,7 +17,7 @@ pub fn apply_frame(ui: &ViewerWindow, frame: &PortrayalFrame) {
             y1: s.y1,
             x2: s.x2,
             y2: s.y2,
-            color: parse_brush(&s.stroke.to_hex()).into(),
+            color: parse_brush(&s.stroke.to_hex()),
             width: s.width_px,
         })
         .collect();
@@ -57,7 +57,7 @@ pub fn apply_frame(ui: &ViewerWindow, frame: &PortrayalFrame) {
             x: sw.x,
             y: sw.y,
             size: sw.size_px,
-            color: parse_brush(&sw.rgb.to_hex()).into(),
+            color: parse_brush(&sw.rgb.to_hex()),
         })
         .collect();
     ui.set_swatches(slint::ModelRc::new(slint::VecModel::from(swatches)));
@@ -70,8 +70,8 @@ pub fn apply_frame(ui: &ViewerWindow, frame: &PortrayalFrame) {
             x: p.x,
             y: p.y,
             radius: p.radius_px,
-            fill: parse_brush(&p.fill.to_hex()).into(),
-            stroke: parse_brush(&p.stroke.to_hex()).into(),
+            fill: parse_brush(&p.fill.to_hex()),
+            stroke: parse_brush(&p.stroke.to_hex()),
         })
         .collect();
     ui.set_points(slint::ModelRc::new(slint::VecModel::from(points)));
