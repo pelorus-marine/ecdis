@@ -23,9 +23,8 @@ pub fn open_s101_portrayal_from_s64_zip(
 ) -> Result<PortrayalCatalogueBundle, PortrayalCatalogueError> {
     use s_164::Corpus;
 
-    let mut corpus = Corpus::open(path.as_ref()).map_err(|e| PortrayalCatalogueError::Io(
-        std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
-    ))?;
+    let mut corpus = Corpus::open(path.as_ref())
+        .map_err(|e| PortrayalCatalogueError::Io(std::io::Error::other(e.to_string())))?;
     let entry = corpus
         .portrayal_catalogues()
         .find(|c| c.product_identifier.as_deref() == Some("S-101"))
@@ -37,9 +36,9 @@ pub fn open_s101_portrayal_from_s64_zip(
                 "no portrayal catalogue in S-64 zip",
             ))
         })?;
-    let bytes = corpus.read_catalogue(&entry).map_err(|e| {
-        PortrayalCatalogueError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
-    })?;
+    let bytes = corpus
+        .read_catalogue(&entry)
+        .map_err(|e| PortrayalCatalogueError::Io(std::io::Error::other(e.to_string())))?;
     PortrayalCatalogueBundle::open_zip(Arc::<[u8]>::from(bytes))
 }
 
@@ -50,9 +49,8 @@ pub fn open_s101_feature_catalogue_from_s64_zip(
 ) -> Result<Option<FeatureCatalogue>, PortrayalCatalogueError> {
     use s_164::Corpus;
 
-    let mut corpus = Corpus::open(path.as_ref()).map_err(|e| PortrayalCatalogueError::Io(
-        std::io::Error::new(std::io::ErrorKind::Other, e.to_string()),
-    ))?;
+    let mut corpus = Corpus::open(path.as_ref())
+        .map_err(|e| PortrayalCatalogueError::Io(std::io::Error::other(e.to_string())))?;
     let entry = corpus
         .catalogues_for_product("S-101")
         .filter(|c| !c.looks_like_portrayal_catalogue())
@@ -69,9 +67,9 @@ pub fn open_s101_feature_catalogue_from_s64_zip(
     let Some(entry) = entry else {
         return Ok(None);
     };
-    let bytes = corpus.read_catalogue(&entry).map_err(|e| {
-        PortrayalCatalogueError::Io(std::io::Error::new(std::io::ErrorKind::Other, e.to_string()))
-    })?;
+    let bytes = corpus
+        .read_catalogue(&entry)
+        .map_err(|e| PortrayalCatalogueError::Io(std::io::Error::other(e.to_string())))?;
     FeatureCatalogue::parse_xml(&bytes).map(Some).map_err(|e| {
         PortrayalCatalogueError::Io(std::io::Error::new(
             std::io::ErrorKind::InvalidData,

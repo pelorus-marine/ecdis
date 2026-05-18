@@ -29,8 +29,8 @@ pub use frid::FridHeader;
 pub use identifier::RecordIdentifier;
 pub use mrid::MridRecord;
 pub use point::PointRecord;
-pub use spatial_ref::SpasRef;
 pub use rias_ref::RiasRef;
+pub use spatial_ref::SpasRef;
 pub use surface::SurfaceRecord;
 
 use iso8211::dr::DataRecord;

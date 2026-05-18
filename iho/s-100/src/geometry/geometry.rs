@@ -1,4 +1,6 @@
-use super::{curve2d::Curve2D, multi_point2d::MultiPoint2D, point2d::Point2D, surface2d::Surface2D};
+use super::{
+    curve2d::Curve2D, multi_point2d::MultiPoint2D, point2d::Point2D, surface2d::Surface2D,
+};
 
 /// Geometry attached to a feature after CRS resolution.
 #[derive(Debug, Clone, PartialEq)]

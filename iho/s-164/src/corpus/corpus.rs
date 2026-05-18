@@ -3,11 +3,11 @@ use std::path::Path;
 
 use zip::ZipArchive;
 
+use crate::S164Result;
 use crate::archive::{read_zip_entry, zip_archive_from_bytes};
 use crate::download::{
     DEFAULT_TEST_DATA_ZIP_V1_2_0_SHA256, DEFAULT_TEST_DATA_ZIP_V1_2_0_URL, cached_download,
 };
-use crate::{S164Result};
 
 use super::build::build_index;
 use super::{CatalogueEntry, DatasetEntry, ExchangeSetEntry};

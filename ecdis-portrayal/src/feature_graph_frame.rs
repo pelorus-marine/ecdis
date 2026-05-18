@@ -79,50 +79,50 @@ pub fn layers_from_graph(
             interiors,
         }) = &f.geometry
         {
-            if exterior.vertices.len() >= 2 && budget.take(exterior.vertices.len()) {
-                if let Some(verts) =
+            if exterior.vertices.len() >= 2
+                && budget.take(exterior.vertices.len())
+                && let Some(verts) =
                     polyline_verts(&projector, vp, width_px, height_px, &exterior.vertices)
+            {
+                layers.polygons.push(FilledPolygon {
+                    vertices: verts,
+                    fill: theme.surface_fill,
+                    stroke: theme.surface_stroke,
+                    fill_alpha: 0.12,
+                });
+            }
+            for ring in interiors {
+                if ring.vertices.len() >= 2
+                    && budget.take(ring.vertices.len())
+                    && let Some(verts) =
+                        polyline_verts(&projector, vp, width_px, height_px, &ring.vertices)
                 {
                     layers.polygons.push(FilledPolygon {
                         vertices: verts,
-                        fill: theme.surface_fill,
+                        fill: theme.background,
                         stroke: theme.surface_stroke,
-                        fill_alpha: 0.12,
+                        fill_alpha: 0.0,
                     });
-                }
-            }
-            for ring in interiors {
-                if ring.vertices.len() >= 2 && budget.take(ring.vertices.len()) {
-                    if let Some(verts) =
-                        polyline_verts(&projector, vp, width_px, height_px, &ring.vertices)
-                    {
-                        layers.polygons.push(FilledPolygon {
-                            vertices: verts,
-                            fill: theme.background,
-                            stroke: theme.surface_stroke,
-                            fill_alpha: 0.0,
-                        });
-                    }
                 }
             }
         }
     }
 
     for f in &graph.features {
-        if let Geometry::Curve(Curve2D { vertices }) = &f.geometry {
-            if vertices.len() >= 2 && budget.take(vertices.len()) {
-                if let Some(verts) = polyline_verts(&projector, vp, width_px, height_px, vertices) {
-                    for w in verts.windows(2) {
-                        layers.segments.push(LineSegment {
-                            x1: w[0].0,
-                            y1: w[0].1,
-                            x2: w[1].0,
-                            y2: w[1].1,
-                            stroke: theme.chart_stroke,
-                            width_px: 1.5,
-                        });
-                    }
-                }
+        if let Geometry::Curve(Curve2D { vertices }) = &f.geometry
+            && vertices.len() >= 2
+            && budget.take(vertices.len())
+            && let Some(verts) = polyline_verts(&projector, vp, width_px, height_px, vertices)
+        {
+            for w in verts.windows(2) {
+                layers.segments.push(LineSegment {
+                    x1: w[0].0,
+                    y1: w[0].1,
+                    x2: w[1].0,
+                    y2: w[1].1,
+                    stroke: theme.chart_stroke,
+                    width_px: 1.5,
+                });
             }
         }
     }
@@ -173,7 +173,9 @@ fn project_point(
     lon: f64,
 ) -> Option<(f32, f32)> {
     match *projector {
-        Projector::C2il(outline) => outline.project_wgs84_to_screen_px(vp, lat, lon, width_px, height_px),
+        Projector::C2il(outline) => {
+            outline.project_wgs84_to_screen_px(vp, lat, lon, width_px, height_px)
+        }
         Projector::Affine(tx) => Some(affine_project(tx, vp, lat, lon)),
     }
 }
@@ -264,9 +266,7 @@ fn polyline_verts(
     Some(
         verts
             .iter()
-            .filter_map(|v| {
-                project_point(projector, vp, width_px, height_px, v.lat_deg, v.lon_deg)
-            })
+            .filter_map(|v| project_point(projector, vp, width_px, height_px, v.lat_deg, v.lon_deg))
             .collect(),
     )
 }

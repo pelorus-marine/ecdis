@@ -5,9 +5,7 @@ use roxmltree::Node;
 use crate::fc::FcCatalogParseError;
 use crate::fc::edition::{FcEditionSummary, parse_fc_edition_summary};
 
-use super::{
-    ComplexAttribute, FeatureType, InformationType, ListedValue, SimpleAttribute,
-};
+use super::{ComplexAttribute, FeatureType, InformationType, ListedValue, SimpleAttribute};
 
 /// Parsed **S-101** feature catalogue (enough for attribute + feature-class resolution).
 #[derive(Debug, Clone)]

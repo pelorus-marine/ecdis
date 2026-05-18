@@ -64,10 +64,7 @@ impl PortrayalCatalogueBundle {
         &self,
         palette: &ColorPalette,
     ) -> Result<Vec<u8>, PortrayalCatalogueError> {
-        let css = palette
-            .css
-            .as_deref()
-            .ok_or(PortrayalCatalogueError::PaletteHasNoStylesheet)?;
+        let css = palette.css.as_deref().ok_or(PortrayalCatalogueError::PaletteHasNoStylesheet)?;
         let symbols_path = format!("{SYMBOLS_DIR}/{css}");
         match self.read_entry(&symbols_path) {
             Ok(bytes) => Ok(bytes),
@@ -116,7 +113,11 @@ fn read_zip_entry<R: Read + Seek>(
 /// S-101 symbol SVG uses `class="sCHBLK"` / `class="fCHWHT"` (not bare token names).
 pub fn stylesheet_from_palette(palette: &ColorPalette) -> Vec<u8> {
     let mut out = Vec::new();
-    let _ = writeln!(out, "/* generated from colorProfile palette \"{}\" */", palette.name);
+    let _ = writeln!(
+        out,
+        "/* generated from colorProfile palette \"{}\" */",
+        palette.name
+    );
     let _ = writeln!(out, ".layout {{ display: none; }}");
     let _ = writeln!(out, ".f0 {{ fill: none; }}");
     for item in &palette.items {

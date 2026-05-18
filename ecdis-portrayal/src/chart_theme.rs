@@ -53,10 +53,7 @@ impl ChartTheme {
         };
 
         let pick = |token: &str, default: Rgb| -> Rgb {
-            palette
-                .srgb(token)
-                .map(|(r, g, b)| Rgb::new(r, g, b))
-                .unwrap_or(default)
+            palette.srgb(token).map(|(r, g, b)| Rgb::new(r, g, b)).unwrap_or(default)
         };
 
         Self {

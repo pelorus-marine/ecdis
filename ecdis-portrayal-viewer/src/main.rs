@@ -132,7 +132,9 @@ fn parse_args() -> Result<(PathBuf, Option<PathBuf>, ViewerCli), Box<dyn std::er
     Ok((enc, fc, cli))
 }
 
-fn load_catalogue(cli: &ViewerCli) -> Result<Option<PortrayalCatalogueBundle>, Box<dyn std::error::Error>> {
+fn load_catalogue(
+    cli: &ViewerCli,
+) -> Result<Option<PortrayalCatalogueBundle>, Box<dyn std::error::Error>> {
     if let Some(ref p) = cli.portrayal_catalogue {
         return Ok(Some(open_portrayal_catalogue_zip(p)?));
     }
@@ -148,7 +150,10 @@ fn load_catalogue(cli: &ViewerCli) -> Result<Option<PortrayalCatalogueBundle>, B
 
 fn catalogue_label(bundle: Option<&PortrayalCatalogueBundle>, mode: DisplayMode) -> String {
     let Some(b) = bundle else {
-        return format!("Catalogue: (none) — fallback theme for {}", mode.palette_name());
+        return format!(
+            "Catalogue: (none) — fallback theme for {}",
+            mode.palette_name()
+        );
     };
     let palettes = b.palette_names();
     let css = b
@@ -187,14 +192,7 @@ fn build_ui_refresh(state: &ViewerState) -> UiRefresh {
     let symbol_ids = state
         .catalogue
         .as_ref()
-        .map(|b| {
-            b.catalogue
-                .manifest
-                .symbols
-                .iter()
-                .map(|s| s.id.as_str().into())
-                .collect()
-        })
+        .map(|b| b.catalogue.manifest.symbols.iter().map(|s| s.id.as_str().into()).collect())
         .unwrap_or_default();
 
     let vp = &state.viewport.state;
@@ -222,7 +220,9 @@ fn apply_ui_refresh(ui: &ViewerWindow, update: UiRefresh) {
     ui.set_scene_index(update.scene_index);
     ui.set_catalogue_label(update.catalogue_label.into());
     ui.set_viewport_label(update.viewport_label.into());
-    ui.set_symbol_ids(slint::ModelRc::new(slint::VecModel::from(update.symbol_ids)));
+    ui.set_symbol_ids(slint::ModelRc::new(slint::VecModel::from(
+        update.symbol_ids,
+    )));
     ui.set_symbol_index(update.symbol_index);
 }
 
@@ -349,11 +349,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         move || {
             let mut st = state_w.lock().unwrap();
             if st.catalogue.is_some() {
-                let n = st
-                    .catalogue
-                    .as_ref()
-                    .map(|b| b.catalogue.manifest.symbols.len())
-                    .unwrap_or(1);
+                let n =
+                    st.catalogue.as_ref().map(|b| b.catalogue.manifest.symbols.len()).unwrap_or(1);
                 st.symbol_index = (st.symbol_index + n - 1) % n;
             }
             hook();
@@ -366,11 +363,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         move || {
             let mut st = state_w.lock().unwrap();
             if st.catalogue.is_some() {
-                let n = st
-                    .catalogue
-                    .as_ref()
-                    .map(|b| b.catalogue.manifest.symbols.len())
-                    .unwrap_or(1);
+                let n =
+                    st.catalogue.as_ref().map(|b| b.catalogue.manifest.symbols.len()).unwrap_or(1);
                 st.symbol_index = (st.symbol_index + 1) % n;
             }
             hook();

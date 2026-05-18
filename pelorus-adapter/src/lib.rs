@@ -16,8 +16,8 @@ mod own_ship;
 pub use ais::AisVesselReport;
 pub use bridge::ChartNavContext;
 pub use mapper::{
-    CoreSampleMapper, FusionClock, StreamInstant, TimedAisTarget, TimedOwnShip,
-    UnconfiguredMapper, merge_own_ship_fill_missing,
+    CoreSampleMapper, FusionClock, StreamInstant, TimedAisTarget, TimedOwnShip, UnconfiguredMapper,
+    merge_own_ship_fill_missing,
 };
 pub use own_ship::OwnShip;
 

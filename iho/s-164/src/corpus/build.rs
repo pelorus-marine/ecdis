@@ -8,9 +8,7 @@ use crate::archive::{
 use crate::catalogue::parse_exchange_catalogue;
 use crate::{S164Error, S164Result};
 
-use super::{
-    CatalogueEntry, Classification, DatasetEntry, ExchangeSetEntry,
-};
+use super::{CatalogueEntry, Classification, DatasetEntry, ExchangeSetEntry};
 
 pub(super) fn build_index(
     archive: &mut ZipArchive<Cursor<Vec<u8>>>,

@@ -32,9 +32,7 @@ pub use color_token_decl::ColorTokenDecl;
 pub use error::PortrayalCatalogueError;
 pub use named_asset::NamedAsset;
 pub use portrayal_catalogue::PortrayalCatalogue;
-pub use portrayal_catalogue_bundle::{
-    PortrayalCatalogueBundle, stylesheet_from_palette,
-};
+pub use portrayal_catalogue_bundle::{PortrayalCatalogueBundle, stylesheet_from_palette};
 pub use portrayal_catalogue_manifest::{PortrayalCatalogueManifest, parse_manifest_xml};
 pub use rule_asset::RuleAsset;
 

@@ -33,7 +33,7 @@ pub use cpu_outline::CpuOutlinePortrayal;
 pub use display_mode::DisplayMode;
 pub use frame::{
     ColorSwatch, FilledPolygon, LineSegment, PointMarker, PortrayalFrame, PortrayalInputs,
-    PortrayalLayers, SymbolSprite, ViewerScene, build_chart_frame, build_c2il_outline_frame,
+    PortrayalLayers, SymbolSprite, ViewerScene, build_c2il_outline_frame, build_chart_frame,
     build_feature_graph_frame, build_frame, build_symbol_gallery_frame, build_theme_swatches_frame,
 };
 pub use portrayal::{NoPortrayal, PortrayError, PortrayalPipeline};

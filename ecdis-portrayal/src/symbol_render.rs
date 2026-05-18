@@ -1,6 +1,6 @@
 //! Rasterize portrayal-catalogue SVG symbols with palette stylesheets.
 
-use s_101::{stylesheet_from_palette, PortrayalCatalogueBundle, PortrayalCatalogueError};
+use s_101::{PortrayalCatalogueBundle, PortrayalCatalogueError, stylesheet_from_palette};
 
 use crate::display_mode::DisplayMode;
 
@@ -20,15 +20,12 @@ pub fn rasterize_symbol(
     max_edge_px: u32,
 ) -> Result<RasterizedSymbol, PortrayalCatalogueError> {
     let svg_bytes = bundle.read_symbol_svg(symbol_id)?;
-    let palette = bundle
-        .catalogue
-        .palette(mode.palette_name())
-        .ok_or_else(|| {
-            PortrayalCatalogueError::Io(std::io::Error::new(
-                std::io::ErrorKind::NotFound,
-                format!("palette {} not in catalogue", mode.palette_name()),
-            ))
-        })?;
+    let palette = bundle.catalogue.palette(mode.palette_name()).ok_or_else(|| {
+        PortrayalCatalogueError::Io(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            format!("palette {} not in catalogue", mode.palette_name()),
+        ))
+    })?;
 
     let css_bytes = bundle
         .read_palette_stylesheet(palette)
@@ -59,16 +56,12 @@ pub fn rasterize_symbol(
 
     let size = tree.size();
     let scale = (f64::from(max_edge_px) / f64::from(size.width().max(size.height()) as f32))
-        .min(4.0)
-        .max(0.25);
+        .clamp(0.25, 4.0);
     let w = (f64::from(size.width()) * scale).ceil().max(1.0) as u32;
     let h = (f64::from(size.height()) * scale).ceil().max(1.0) as u32;
 
     let mut pixmap = tiny_skia::Pixmap::new(w, h).ok_or_else(|| {
-        PortrayalCatalogueError::Io(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "failed to allocate pixmap",
-        ))
+        PortrayalCatalogueError::Io(std::io::Error::other("failed to allocate pixmap"))
     })?;
 
     let transform = tiny_skia::Transform::from_scale(scale as f32, scale as f32);
@@ -87,15 +80,15 @@ fn prepare_svg_for_render(svg: &str, css: &str) -> String {
     // drop the whole line or the root element disappears.
     let without_pi = strip_xml_stylesheet_pi(svg);
     let style_block = format!("<style type=\"text/css\"><![CDATA[\n{css}\n]]></style>");
-    if let Some(start) = without_pi.find("<svg") {
-        if let Some(end) = without_pi[start..].find('>') {
-            let insert = start + end + 1;
-            return format!(
-                "{}\n{style_block}\n{}",
-                &without_pi[..insert],
-                &without_pi[insert..]
-            );
-        }
+    if let Some(start) = without_pi.find("<svg")
+        && let Some(end) = without_pi[start..].find('>')
+    {
+        let insert = start + end + 1;
+        return format!(
+            "{}\n{style_block}\n{}",
+            &without_pi[..insert],
+            &without_pi[insert..]
+        );
     }
     format!("<svg>{style_block}{without_pi}</svg>")
 }
@@ -136,11 +129,7 @@ mod tests {
         let zip = std::env::var_os("IHO_TESTDATA_ZIP").expect("IHO_TESTDATA_ZIP");
         let bundle = open_s101_portrayal_from_s64_zip(&zip).expect("open portrayal from S-64");
         let img = rasterize_symbol(&bundle, "ACHARE02", DisplayMode::Day, 128).expect("render");
-        let opaque: u32 = img
-            .rgba
-            .chunks_exact(4)
-            .filter(|p| p[3] > 32)
-            .count() as u32;
+        let opaque: u32 = img.rgba.chunks_exact(4).filter(|p| p[3] > 32).count() as u32;
         assert!(opaque > 50, "expected painted pixels, got {opaque}");
     }
 }

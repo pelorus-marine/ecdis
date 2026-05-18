@@ -2,6 +2,7 @@
 //!
 //! Projection is **non-navigational** (dashboard-grade); ENC geometry portrayal remains future work.
 
+#[allow(clippy::module_inception)]
 mod chart_viewport;
 mod chart_viewport_state;
 

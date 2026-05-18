@@ -26,15 +26,10 @@ pub fn download_bytes(url: &str) -> S164Result<Vec<u8>> {
 
 /// Download with an explicit timeout (connect + overall response read).
 pub fn download_bytes_with_timeout(url: &str, timeout: Duration) -> S164Result<Vec<u8>> {
-    let agent: ureq::Agent = ureq::Agent::config_builder()
-        .timeout_global(Some(timeout))
-        .build()
-        .into();
+    let agent: ureq::Agent =
+        ureq::Agent::config_builder().timeout_global(Some(timeout)).build().into();
 
-    let mut resp = agent
-        .get(url)
-        .call()
-        .map_err(|e| S164Error::Http(e.to_string()))?;
+    let mut resp = agent.get(url).call().map_err(|e| S164Error::Http(e.to_string()))?;
 
     let status = resp.status().as_u16();
     if !(200..300).contains(&status) {
@@ -44,10 +39,7 @@ pub fn download_bytes_with_timeout(url: &str, timeout: Duration) -> S164Result<V
         });
     }
 
-    let buf = resp
-        .body_mut()
-        .read_to_vec()
-        .map_err(|e| S164Error::Http(e.to_string()))?;
+    let buf = resp.body_mut().read_to_vec().map_err(|e| S164Error::Http(e.to_string()))?;
     Ok(buf)
 }
 

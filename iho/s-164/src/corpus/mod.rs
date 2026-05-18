@@ -11,6 +11,7 @@
 mod build;
 mod catalogue_entry;
 mod classification;
+#[allow(clippy::module_inception)]
 mod corpus;
 mod dataset_entry;
 mod exchange_set_entry;

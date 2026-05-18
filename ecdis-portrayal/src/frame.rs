@@ -3,7 +3,9 @@
 use s_101::{FeatureCatalogue, PortrayalCatalogueBundle, S101Dataset};
 
 use crate::chart_theme::{ChartTheme, Rgb};
-use crate::chart_viewport::{ChartViewportState, UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX};
+use crate::chart_viewport::{
+    ChartViewportState, UI_CHART_VIEWBOX_HEIGHT_PX, UI_CHART_VIEWBOX_WIDTH_PX,
+};
 use crate::cpu_outline::CpuOutlinePortrayal;
 use crate::display_mode::DisplayMode;
 use crate::feature_graph_frame;
@@ -116,9 +118,7 @@ impl PortrayalFrame {
     }
 }
 
-fn active_palette<'a>(
-    inputs: &'a PortrayalInputs<'a>,
-) -> Option<&'a s_101::ColorPalette> {
+fn active_palette<'a>(inputs: &'a PortrayalInputs<'a>) -> Option<&'a s_101::ColorPalette> {
     inputs
         .catalogue
         .and_then(|b| b.catalogue.palette(inputs.display_mode.palette_name()))
@@ -321,7 +321,9 @@ pub fn build_symbol_gallery_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFram
         return PortrayalFrame::new(
             theme,
             PortrayalLayers {
-                caption: "Symbol gallery — load portrayal catalogue (--portrayal-catalogue or --s64-zip)".to_string(),
+                caption:
+                    "Symbol gallery — load portrayal catalogue (--portrayal-catalogue or --s64-zip)"
+                        .to_string(),
                 ..Default::default()
             },
         );
@@ -330,14 +332,7 @@ pub fn build_symbol_gallery_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFram
     let symbol_id = inputs
         .selected_symbol_id
         .map(str::to_string)
-        .or_else(|| {
-            bundle
-                .catalogue
-                .manifest
-                .symbols
-                .first()
-                .map(|s| s.id.clone())
-        });
+        .or_else(|| bundle.catalogue.manifest.symbols.first().map(|s| s.id.clone()));
 
     let Some(symbol_id) = symbol_id else {
         return PortrayalFrame::new(
@@ -350,32 +345,28 @@ pub fn build_symbol_gallery_frame(inputs: &PortrayalInputs<'_>) -> PortrayalFram
     };
 
     let mut symbols = Vec::new();
-    let caption = match symbol_render::rasterize_symbol(
-        bundle,
-        &symbol_id,
-        inputs.display_mode,
-        192,
-    ) {
-        Ok(sprite) => {
-            let cx = UI_CHART_VIEWBOX_WIDTH_PX * 0.5 - sprite.width_px as f32 * 0.5;
-            let cy = UI_CHART_VIEWBOX_HEIGHT_PX * 0.5 - sprite.height_px as f32 * 0.5;
-            symbols.push(SymbolSprite {
-                symbol_id: symbol_id.clone(),
-                x: cx,
-                y: cy,
-                width_px: sprite.width_px,
-                height_px: sprite.height_px,
-                rgba: sprite.rgba,
-            });
-            format!(
-                "Symbol {symbol_id} — {}×{} px, mode {}",
-                sprite.width_px,
-                sprite.height_px,
-                inputs.display_mode.palette_name()
-            )
-        }
-        Err(e) => format!("Symbol {symbol_id} — render error: {e}"),
-    };
+    let caption =
+        match symbol_render::rasterize_symbol(bundle, &symbol_id, inputs.display_mode, 192) {
+            Ok(sprite) => {
+                let cx = UI_CHART_VIEWBOX_WIDTH_PX * 0.5 - sprite.width_px as f32 * 0.5;
+                let cy = UI_CHART_VIEWBOX_HEIGHT_PX * 0.5 - sprite.height_px as f32 * 0.5;
+                symbols.push(SymbolSprite {
+                    symbol_id: symbol_id.clone(),
+                    x: cx,
+                    y: cy,
+                    width_px: sprite.width_px,
+                    height_px: sprite.height_px,
+                    rgba: sprite.rgba,
+                });
+                format!(
+                    "Symbol {symbol_id} — {}×{} px, mode {}",
+                    sprite.width_px,
+                    sprite.height_px,
+                    inputs.display_mode.palette_name()
+                )
+            }
+            Err(e) => format!("Symbol {symbol_id} — render error: {e}"),
+        };
 
     PortrayalFrame::new(
         theme,

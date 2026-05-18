@@ -4,6 +4,7 @@
 //! the namespace assembly point.
 
 mod curve2d;
+#[allow(clippy::module_inception)]
 mod geometry;
 mod multi_point2d;
 mod point2d;
